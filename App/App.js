@@ -55,11 +55,29 @@ function emailOf(user) {
 }
 
 export default function App() {
+
+
+  /***************************************************************************
+   INITIALIZATION
+   ***************************************************************************/
+
+  // State for authentication 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [errorMsg, setErrorMsg] = React.useState('');
   const [loggedInUser, setLoggedInUser] = React.useState(null);
 
+  // State for tutoring sessions
+
+
+
+
+  // State for users & profile
+
+
+
+
+  // component mount and unmount
   useEffect(() => {
       // Anything in here is fired on component mount.
       console.log('Component did mount');
@@ -74,6 +92,12 @@ export default function App() {
       }
     }, [])
 
+
+
+/***************************************************************************
+   AUTHENTICATION CODE
+
+   ***************************************************************************/
   // Clear error message when email is updated to be nonempty
   useEffect(
     () => { if (email != '') setErrorMsg(''); },
@@ -185,9 +209,42 @@ export default function App() {
     signOut(auth); // Will eventually set auth.currentUser to null     
   }
 
-  return (
-    <View style={styles.screen}>
-      <StatusBar style="auto" />
+
+
+
+/***************************************************************************
+   SESSIONS FUNCTIONALITY CODE
+   ***************************************************************************/
+
+
+
+
+
+
+
+   
+
+
+
+/***************************************************************************
+   USERS FUNCTIONALITY CODE
+   ***************************************************************************/
+
+
+
+
+
+
+
+
+
+
+  /***************************************************************************
+   RENDERING AUTHENTICATION
+   ***************************************************************************/
+
+   function loginPane() {
+    return (
       <View style={loggedInUser === null ? styles.loginLogoutPane : styles.hidden}>
         <View style={styles.labeledInput}>
           <Text style={styles.inputLabel}>Email:</Text>
@@ -217,15 +274,43 @@ export default function App() {
           <Text style={styles.errorMessage}>{errorMsg}</Text>
         </View>
       </View>
-      <View style={loggedInUser === null ? styles.hidden : styles.loginLogoutPane}>
-          <TouchableOpacity style={styles.button}
-             onPress={() => logOut()}>
-            <Text style={styles.buttonText}>Log Out</Text>
-          </TouchableOpacity> 
-      </View>
+    );
+  }
+
+  function loggedInUserPane() {
+    return (
       <ScrollView style={styles.jsonContainer}>
         <Text style={styles.json}>Logged In User: {formatJSON(loggedInUser)}</Text>
       </ScrollView>
+    );
+  }
+
+    /***************************************************************************
+   RENDERING SESSIONS TAB
+   ***************************************************************************/
+
+  
+
+
+
+  /***************************************************************************
+   RENDERING PROFILE TAB
+   ***************************************************************************/
+
+
+
+
+
+
+
+/***************************************************************************
+   TOP LEVEL RENDERING 
+   ***************************************************************************/
+
+   return (
+    <View style={styles.screen}>
+      <StatusBar style="auto" />
+      {loginPane()}
     </View>
   );
 }
