@@ -3,6 +3,8 @@ import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, ScrollView, Text, TextInput, 
          TouchableOpacity, View } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { initializeApp } from "firebase/app";
 import { // access to authentication features:
          getAuth, 
@@ -680,7 +682,14 @@ export default function App() {
 
 
   // State for users & profile
-
+  const [selectedUser, setSelectedUser] = React.useState({
+		"UID": 1,
+		"name": "Quemby Burke",
+    "email":"jliu15@wellesley.edu",
+		"classyear": 2024,
+		"list": "ECON 226, PSYC101, ENG 224, THST 345",
+		"attendedSID": "9, 8"
+	}); //for testing
 
 
 
@@ -838,6 +847,8 @@ export default function App() {
    ***************************************************************************/
 
 
+  
+
 
 
 
@@ -884,10 +895,14 @@ export default function App() {
     );
   }
 
-  function loggedInUserPane() {
+/***************************************************************************
+   RENDERING DEBUGGING INFO
+   ***************************************************************************/
+  
+   function displayStates() {
     return (
       <ScrollView style={styles.jsonContainer}>
-        <Text style={styles.json}>Logged In User: {formatJSON(loggedInUser)}</Text>
+        <Text style={styles.json}>Selected User: {formatJSON(selectedUser)}</Text>
       </ScrollView>
     );
   }
@@ -903,7 +918,55 @@ export default function App() {
   /***************************************************************************
    RENDERING PROFILE TAB
    ***************************************************************************/
+  //  const colors=['aqua', 'bisque', 'coral', 'crimson', 'fuchsia', 
+  //  'gold',  'lime', 'orange', 'pink', 'plum', 'purple',
+  //  'salmon', 'teal', 'wheat'];
 
+  //  function colorSelect() {
+  //   const [pokemon,setPokemon] = useState();
+  //   const [selectedLanguage,setSelectedLanguage] = useState();
+  //   const [color,setColor] = useState('plum');
+  
+  //   return (
+  //      <View style={[styles.screen, {backgroundColor: color}]}>
+  //        <Picker
+  //           style={styles.pickerStyles}
+  //           mode='dropdown' // or 'dialog'; chooses mode on Android
+  //           selectedValue={color}
+  //           onValueChange={(itemValue, itemIndex) => setColor(itemValue)}>
+  //           {colors.map(clr => <Picker.Item key={clr} label={clr} value={clr}/>)}
+  //        </Picker>
+  //      </View>
+  //   );
+  // }
+  
+  
+  //  function testingUserSelection() {
+  //  return (
+  //   <View style={[styles.screen]}>
+  //     <Picker
+  //        style={styles.pickerStyles}
+  //        mode='dialog' // or 'dialog'; chooses mode on Android
+  //        selectedValue={selectedUser}
+  //        onValueChange={(itemValue, itemIndex) => setSelectedUser(itemValue)}>
+  //       <Picker.Item label="Pikachu" value="pikachu" />
+  //       <Picker.Item label="Charmander" value="charmander" />
+  //       <Picker.Item label="Squirtle" value="Squirtle" />
+  //        {/* {fakeUsers.map(user => <Picker.Item key={user.name} label={user.name} value={user.name}/>)} */}
+  //     </Picker>
+  //   </View>
+  //   );
+  // }
+
+   function displayPersonalInfo() {
+    return (
+        <View style={[styles.screen]}>
+          <Text >Name: {selectedUser.name}</Text>
+          <Text >Email: {selectedUser.email}</Text>
+          <Text >Class Year: Class of {selectedUser.classyear}</Text>
+        </View>
+    );
+  }
 
 
 
@@ -915,10 +978,15 @@ export default function App() {
    ***************************************************************************/
 
    return (
+    <PaperProvider>
     <View style={styles.screen}>
       <StatusBar style="auto" />
       {loginPane()}
+      {/* {colorSelect()} */}
+      {displayPersonalInfo()}
+      {displayStates()}
     </View>
+    </PaperProvider>
   );
 }
 
@@ -1003,5 +1071,9 @@ const styles = StyleSheet.create({
       padding: 10, 
       color: 'blue', 
   },
-
+  pickerStyles:{
+    width:'70%',
+    backgroundColor:'gray',
+    color:'black'
+  }
 });
