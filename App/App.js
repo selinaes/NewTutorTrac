@@ -5,6 +5,7 @@ import { StyleSheet, ScrollView, Text, TextInput,
          TouchableOpacity, View } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Provider as PaperProvider } from 'react-native-paper';
+import { Chip, Surface, Avatar } from 'react-native-paper';
 import { initializeApp } from "firebase/app";
 import { // access to authentication features:
          getAuth, 
@@ -13,6 +14,7 @@ import { // access to authentication features:
          // for logging out:
          signOut
   } from "firebase/auth";
+const data = require('./data.json');
 
 /* 
 // *** REPLACE THIS STUB! ***
@@ -903,6 +905,7 @@ export default function App() {
     return (
       <ScrollView style={styles.jsonContainer}>
         <Text style={styles.json}>Selected User: {formatJSON(selectedUser)}</Text>
+        <Text style={styles.json}>Courses: {formatJSON(data.courses.slice(1,3))}</Text>
       </ScrollView>
     );
   }
@@ -946,7 +949,7 @@ export default function App() {
   //   <View style={[styles.screen]}>
   //     <Picker
   //        style={styles.pickerStyles}
-  //        mode='dialog' // or 'dialog'; chooses mode on Android
+  //        mode='dropdown' // or 'dialog'; chooses mode on Android
   //        selectedValue={selectedUser}
   //        onValueChange={(itemValue, itemIndex) => setSelectedUser(itemValue)}>
   //       <Picker.Item label="Pikachu" value="pikachu" />
@@ -960,11 +963,18 @@ export default function App() {
 
    function displayPersonalInfo() {
     return (
-        <View style={[styles.screen]}>
+        <View >
           <Text >Name: {selectedUser.name}</Text>
           <Text >Email: {selectedUser.email}</Text>
           <Text >Class Year: Class of {selectedUser.classyear}</Text>
         </View>
+    );
+  }
+
+
+  //A single class chip component
+  const CourseItem = props => { return (
+      <Chip style={styles.chip}>{props.department + " " + props.number}</Chip>
     );
   }
 
@@ -984,6 +994,10 @@ export default function App() {
       {loginPane()}
       {/* {colorSelect()} */}
       {displayPersonalInfo()}
+      <View style={styles.container}>
+      {data.courses.slice(1,3).map(course => <CourseItem department={course.department} number={course.number}></CourseItem>)}
+      </View>
+      
       {displayStates()}
     </View>
     </PaperProvider>
@@ -1075,5 +1089,24 @@ const styles = StyleSheet.create({
     width:'70%',
     backgroundColor:'gray',
     color:'black'
+  },
+  surface: {
+    padding: 8,
+    height: 80,
+    width: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+  chip: {
+    flexDirection: 'row',
+    width: 90,
+    backgroundColor: "white",
+  },
+  container: {
+    flex: 0,
+    justifyContent: "space-between",
+    backgroundColor: "gray",
+    width: '80%'
   }
 });
