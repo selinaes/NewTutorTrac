@@ -994,8 +994,8 @@ export default function App() {
       {loginPane()}
       {/* {colorSelect()} */}
       {displayPersonalInfo()}
-      <View style={styles.container}>
-      {data.courses.slice(1,3).map(course => <CourseItem department={course.department} number={course.number}></CourseItem>)}
+      <View style={styles.courseContainer}>
+      {data.courses.slice(1,20).map(course => <CourseItem key={course} department={course.department} number={course.number}></CourseItem>)}
       </View>
       
       {displayStates()}
@@ -1075,8 +1075,9 @@ const styles = StyleSheet.create({
       display: 'flex',
   },
   jsonContainer: {
-      flex: 1,
       width: '98%',
+      flex: 0.2,
+      flexBasis:'auto',
       borderWidth: 1,
       borderStyle: 'dashed', // Lyn sez: doesn't seem to work 
       borderColor: 'blue',
@@ -1100,13 +1101,18 @@ const styles = StyleSheet.create({
   },
   chip: {
     flexDirection: 'row',
-    width: 90,
+    width: 100,
+    margin: 3,
+    textAlign: 'center',
     backgroundColor: "white",
   },
-  container: {
-    flex: 0,
-    justifyContent: "space-between",
+  courseContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: "flex-start",
+    alignItems:"flex-start",
+    flexWrap:"wrap",
     backgroundColor: "gray",
-    width: '80%'
+    width: '90%'
   }
 });
