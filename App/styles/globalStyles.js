@@ -84,6 +84,15 @@ export const globalStyles = StyleSheet.create({
         padding: 10, 
         color: 'blue', 
     },
+    subComponentContainer: {
+        flex: 1,
+        padding: 10, 
+        color: 'blue', 
+        borderWidth: 1,
+        borderStyle: 'dashed', // Lyn sez: doesn't seem to work 
+        borderColor: 'coral',
+        backgroundColor: 'pink',
+      },
     pickerStyles:{
       width:'70%',
       backgroundColor:'gray',
