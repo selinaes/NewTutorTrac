@@ -15,6 +15,7 @@ export default function SignedInDisplay(props) {
         title={'Sign Out'} 
         onPress={props.signOutUser}
       />
+      <Button title="Go to Profile Screen" onPress={() => props.navigation.navigate('Profile')} />
     </View>
     
   );

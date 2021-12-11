@@ -39,6 +39,11 @@ export const globalStyles = StyleSheet.create({
         justifyContent: 'center',
   
     },
+    verticalButtonHolder: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     button: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -85,7 +90,7 @@ export const globalStyles = StyleSheet.create({
         color: 'blue', 
     },
     subComponentContainer: {
-        flex: 1,
+
         padding: 10, 
         color: 'blue', 
         borderWidth: 1,

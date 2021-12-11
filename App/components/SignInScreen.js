@@ -220,7 +220,7 @@ export default function SignInScreen(props) {
     return(
         <View style={globalStyles.screen}>
         {loginPane()}
-        <SignedInDisplay signOutUser = {logOut}></SignedInDisplay>
+        <SignedInDisplay signOutUser = {logOut} navigation={props.navigation}></SignedInDisplay>
         {signedInProps.displayStates()}
         </View>
     )

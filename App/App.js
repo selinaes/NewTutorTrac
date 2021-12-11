@@ -11,6 +11,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import StateContext from './components/StateContext.js';
 import { globalStyles } from './styles/globalStyles.js';
 import SignInScreen from './components/SignInScreen.js';
+import ProfileScreen from './components/ProfileScreen.js';
+import SessionListScreen from './components/SessionListScreen.js';
 
 const data = require('./data.json');
 
@@ -197,6 +199,12 @@ export default function App() {
             initialRouteName="SignInScreen">
             <Stack.Screen 
             name="SignIn" component={SignInScreen} 
+            />
+            <Stack.Screen 
+            name="Profile" component={ProfileScreen} 
+            />
+            <Stack.Screen 
+            name="SessionList" component={SessionListScreen} 
             />
        {/* <View style={globalStyles.screen}> */}
 
