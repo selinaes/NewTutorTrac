@@ -111,13 +111,6 @@ export const globalStyles = StyleSheet.create({
       justifyContent: 'center',
       elevation: 4,
     },
-    chip: {
-      flexDirection: 'row',
-      width: 100,
-      margin: 3,
-      textAlign: 'center',
-      backgroundColor: "white",
-    },
     courseContainer: {
       flex: 1,
       flexDirection: 'row',
