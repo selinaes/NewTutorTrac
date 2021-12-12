@@ -90,7 +90,6 @@ export const globalStyles = StyleSheet.create({
         color: 'blue', 
     },
     subComponentContainer: {
-
         padding: 10, 
         color: 'blue', 
         borderWidth: 1,
@@ -112,7 +111,6 @@ export const globalStyles = StyleSheet.create({
       elevation: 4,
     },
     courseContainer: {
-      flex: 1,
       flexDirection: 'row',
       justifyContent: "flex-start",
       alignItems:"flex-start",

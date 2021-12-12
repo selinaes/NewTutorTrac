@@ -3,11 +3,16 @@ import { StyleSheet, Text, View, Button } from "react-native";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
+import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
 const data = require("../data.json");
 
 export default function ProfileScreen(props) {
   const screenProps = useContext(StateContext);
   const profileProps = screenProps.profileProps;
+
+  /***************************************************************************
+   USERS FUNCTIONALITY CODE
+   ***************************************************************************/
 
   /***************************************************************************
      RENDERING PROFILE TAB
@@ -73,6 +78,22 @@ export default function ProfileScreen(props) {
             department={course.department}
             number={course.number}
           ></CourseItem>
+        ))}
+      </View>
+      <View style={globalStyles.courseContainer}>
+        {data.sessions.slice(0, 2).map((session) => (
+          <SimplifiedSessionCard
+            subtitle={data.users[session.tutor].name}
+            title={
+              session.type +
+              ": " +
+              session.courses.map(
+                (index) =>
+                  data.courses[index].department + data.courses[index].number
+              )
+            }
+            content={session.startTime}
+          ></SimplifiedSessionCard>
         ))}
       </View>
       <View style={globalStyles.verticalButtonHolder}>

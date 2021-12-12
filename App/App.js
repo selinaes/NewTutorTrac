@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Constants from "expo-constants";
 import { StatusBar } from "expo-status-bar";
 import {
-  StyleSheet,
   ScrollView,
   Text,
   TextInput,
@@ -70,14 +68,6 @@ export default function App() {
   const profileProps = { selectedUser, setSelectedUser };
 
   /***************************************************************************
-   SESSIONS FUNCTIONALITY CODE
-   ***************************************************************************/
-
-  /***************************************************************************
-   USERS FUNCTIONALITY CODE
-   ***************************************************************************/
-
-  /***************************************************************************
    RENDERING DEBUGGING INFO
    ***************************************************************************/
 
@@ -115,12 +105,6 @@ export default function App() {
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="SessionList" component={SessionListScreen} />
-            {/* <View style={globalStyles.screen}> */}
-
-            {/* {colorSelect()} */}
-
-            {/* {displayStates()} */}
-            {/* </View>  */}
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

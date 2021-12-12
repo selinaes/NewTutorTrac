@@ -2,10 +2,15 @@ import React, { useContext } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
+import SessionCard from "./SessionCard.js";
 
 export default function SessionListScreen(props) {
   const screenProps = useContext(StateContext);
   const sessionsProps = screenProps.sessionsProps;
+
+  /***************************************************************************
+   SESSIONS FUNCTIONALITY CODE
+   ***************************************************************************/
 
   return (
     <View style={globalStyles.screen}>
