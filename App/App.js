@@ -20,7 +20,7 @@ import SessionListScreen from "./components/SessionListScreen.js";
 const data = require("./data.json");
 
 function formatJSON(jsonVal) {
-  // Lyn sez: replacing \n by <br/> not necesseary if use this CSS:
+  // Lyn sez: replacing \n by <br/> not necessary if use this CSS:
   //   white-space: break-spaces; (or pre-wrap)
   // let replacedNewlinesByBRs = prettyPrintedVal.replace(new RegExp('\n', 'g'), '<br/>')
   return JSON.stringify(jsonVal, null, 2);
@@ -53,19 +53,18 @@ export default function App() {
 
   // State for tutoring sessions
 
-  const sessionsProps = {};
-
   // State for users & profile
   const [selectedUser, setSelectedUser] = React.useState({
     UID: 1,
     name: "Quemby Burke",
-    email: "jliu15@wellesley.edu",
+    email: "qb1@wellesley.edu",
     classyear: 2024,
-    list: "ECON 226, PSYC101, ENG 224, THST 345",
-    attendedSID: "9, 8",
+    courses: [0, 1, 2, 3],
+    attendedSID: [8, 9],
   }); //for testing
 
   const profileProps = { selectedUser, setSelectedUser };
+  const sessionsProps = { selectedUser, setSelectedUser };
 
   /***************************************************************************
    RENDERING DEBUGGING INFO
@@ -88,7 +87,7 @@ export default function App() {
   }
 
   /***************************************************************************
-   TOP LEVEL RENDERING 
+   TOP LEVEL RENDERING
    ***************************************************************************/
 
   const screenProps = { signedInProps, profileProps, sessionsProps };
