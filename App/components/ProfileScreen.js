@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
+import { Headline, Paragraph } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
@@ -59,57 +60,63 @@ export default function ProfileScreen(props) {
   function displayPersonalInfo() {
     return (
       <View>
-        <Text>Name: {profileProps.selectedUser.name}</Text>
-        <Text>Email: {profileProps.selectedUser.email}</Text>
-        <Text>Class Year: Class of {profileProps.selectedUser.classyear}</Text>
+        <Paragraph>Name: {profileProps.selectedUser.name}</Paragraph>
+        <Paragraph>Email: {profileProps.selectedUser.email}</Paragraph>
+        <Paragraph>
+          Class Year: Class of {profileProps.selectedUser.classyear}
+        </Paragraph>
       </View>
     );
   }
 
   return (
     <View style={globalStyles.screen}>
-      <Text>Profiles Screen</Text>
-      {/* <Text style={globalStyles.json}>props: {formatJSON(props)}</Text> */}
-      {displayPersonalInfo()}
-      <View style={globalStyles.courseContainer}>
-        {data.courses.slice(1, 20).map((course) => (
-          <CourseItem
-            key={course}
-            department={course.department}
-            number={course.number}
-          ></CourseItem>
-        ))}
-      </View>
-      <View style={globalStyles.courseContainer}>
-        {data.sessions.slice(0, 2).map((session) => (
-          <SimplifiedSessionCard
-            subtitle={data.users[session.tutor].name}
-            title={
-              session.type +
-              ": " +
-              session.courses.map(
-                (index) =>
-                  data.courses[index].department + data.courses[index].number
-              )
-            }
-            content={session.startTime}
-          ></SimplifiedSessionCard>
-        ))}
-      </View>
-      <View style={globalStyles.verticalButtonHolder}>
-        <Button
-          title="Go to SignInScreen"
-          onPress={() => props.navigation.navigate("SignIn")}
-        />
-        <Button
-          title="Go to Session List"
-          onPress={() => props.navigation.navigate("SessionList")}
-        />
-        <Button
-          title="Go back to first screen in stack"
-          onPress={() => props.navigation.popToTop()}
-        />
-      </View>
+      <ScrollView style={globalStyles.scrollView}>
+        {/* <Text style={globalStyles.json}>props: {formatJSON(props)}</Text> */}
+        <Headline>Personal Profile</Headline>
+        {displayPersonalInfo()}
+        <Headline>Registered Courses</Headline>
+        <View style={globalStyles.courseContainer}>
+          {data.courses.slice(1, 5).map((course) => (
+            <CourseItem
+              key={course}
+              department={course.department}
+              number={course.number}
+            ></CourseItem>
+          ))}
+        </View>
+        <Headline>Attended Sessions</Headline>
+        <View style={globalStyles.courseContainer}>
+          {data.sessions.slice(0, 2).map((session) => (
+            <SimplifiedSessionCard
+              subtitle={data.users[session.tutor].name}
+              title={
+                session.type +
+                ": " +
+                session.courses.map(
+                  (index) =>
+                    data.courses[index].department + data.courses[index].number
+                )
+              }
+              content={session.startTime}
+            ></SimplifiedSessionCard>
+          ))}
+        </View>
+        <View style={globalStyles.verticalButtonHolder}>
+          <Button
+            title="Go to SignInScreen"
+            onPress={() => props.navigation.navigate("SignIn")}
+          />
+          <Button
+            title="Go to Session List"
+            onPress={() => props.navigation.navigate("SessionList")}
+          />
+          <Button
+            title="Go back to first screen in stack"
+            onPress={() => props.navigation.popToTop()}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 }

@@ -6,8 +6,8 @@ export const globalStyles = StyleSheet.create({
     screen: {
       flex: 1,
       paddingTop: Constants.statusBarHeight,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: "stretch",
+      justifyContent: "space-between",
       backgroundColor: "#fff",
     }, 
     loginLogoutPane: {
@@ -116,6 +116,10 @@ export const globalStyles = StyleSheet.create({
       alignItems:"flex-start",
       flexWrap:"wrap",
       backgroundColor: "gray",
-      width: '90%'
-    }
+      width: '100%'
+    },
+    scrollView: {
+        backgroundColor: 'white',
+        marginHorizontal: 20,
+      },
   });
