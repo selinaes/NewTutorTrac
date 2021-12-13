@@ -16,6 +16,7 @@ import { globalStyles } from "./styles/globalStyles.js";
 import SignInScreen from "./components/SignInScreen.js";
 import ProfileScreen from "./components/ProfileScreen.js";
 import SessionListScreen from "./components/SessionListScreen.js";
+import DataDisplayScreen from "./components/DataDisplayScreen.js";
 
 const data = require("./data.json");
 
@@ -104,6 +105,7 @@ export default function App() {
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="SessionList" component={SessionListScreen} />
+            <Stack.Screen name="DataDisplay" component={SessionListScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
