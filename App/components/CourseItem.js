@@ -12,7 +12,7 @@ export default function CourseItem(props) {
 const styles = StyleSheet.create({
   chip: {
     flexDirection: "row",
-    width: 100,
+    width: 120,
     margin: 3,
     textAlign: "center",
     backgroundColor: "white",

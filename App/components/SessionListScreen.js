@@ -20,7 +20,6 @@ function SessionsList(props) {
 
   return (
     <View style={globalStyles.screen}>
-      <Text>Upcoming Sessions</Text>
       <ScrollView>
         {(data.sessions.filter(
           (session) => sessionsProps.selectedUser.courses.some(c => session.courses.includes(c))).sort(
@@ -28,16 +27,11 @@ function SessionsList(props) {
           <SessionCard
                 subtitle={data.users[session.tutor - 1].name}
                 title={
-                  session.type +
-                  ": " +
-                  session.courses.map(
-                    (index) =>
-                      data.courses[index].department + data.courses[index].number
-                  )
+                  session.type + ": " + session.department
                 }
                 action={(session) => {
                   screenProps.selectedProps = session;
-                  props.navigation.navigate("Details");
+                  props.navigation.navigate("Session Details");
                 }}
                 data={session}
                 content={ <View style={globalStyles.courseContainer}>
@@ -63,7 +57,7 @@ export default function SessionListScreen(props) {
           <Stack.Navigator
       initialRouteName="Home"
           >
-            <Stack.Screen name="Home" component={SessionsList} />
-            <Stack.Screen name="Details" component={DataDisplayScreen} />
+            <Stack.Screen name="Upcoming Sessions" component={SessionsList} />
+            <Stack.Screen name="Session Details" component={DataDisplayScreen} />
           </Stack.Navigator>);
 }
