@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
-import { Headline, Paragraph } from "react-native-paper";
+import { Headline, Paragraph, BottomNavigation } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
@@ -101,20 +101,6 @@ export default function ProfileScreen(props) {
               content={session.startTime}
             ></SimplifiedSessionCard>
           ))}
-        </View>
-        <View style={globalStyles.verticalButtonHolder}>
-          <Button
-            title="Go to SignInScreen"
-            onPress={() => props.navigation.navigate("SignIn")}
-          />
-          <Button
-            title="Go to Session List"
-            onPress={() => props.navigation.navigate("SessionList")}
-          />
-          <Button
-            title="Go back to first screen in stack"
-            onPress={() => props.navigation.popToTop()}
-          />
         </View>
       </ScrollView>
     </View>

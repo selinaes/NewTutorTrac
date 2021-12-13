@@ -10,13 +10,13 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import StateContext from "./components/StateContext.js";
 import { globalStyles } from "./styles/globalStyles.js";
 import SignInScreen from "./components/SignInScreen.js";
 import ProfileScreen from "./components/ProfileScreen.js";
 import SessionListScreen from "./components/SessionListScreen.js";
-import DataDisplayScreen from "./components/DataDisplayScreen.js";
 
 const data = require("./data.json");
 
@@ -27,7 +27,7 @@ function formatJSON(jsonVal) {
   return JSON.stringify(jsonVal, null, 2);
 }
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   /***************************************************************************
@@ -66,6 +66,7 @@ export default function App() {
 
   const profileProps = { selectedUser, setSelectedUser };
   const sessionsProps = { selectedUser, setSelectedUser };
+  const selectedProps =  data.sessions[0];
 
   /***************************************************************************
    RENDERING DEBUGGING INFO
@@ -91,22 +92,21 @@ export default function App() {
    TOP LEVEL RENDERING
    ***************************************************************************/
 
-  const screenProps = { signedInProps, profileProps, sessionsProps };
+  const screenProps = { signedInProps, profileProps, sessionsProps, selectedProps };
 
   return (
     <StateContext.Provider value={screenProps}>
       <PaperProvider>
         <NavigationContainer>
           <StatusBar style="auto" />
-          <Stack.Navigator
+          <Tab.Navigator
             screenOptions={{ headerStyle: { backgroundColor: "coral" } }}
-            initialRouteName="SignInScreen"
+            initialRouteName="Sessions"
           >
-            <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="SessionList" component={SessionListScreen} />
-            <Stack.Screen name="DataDisplay" component={SessionListScreen} />
-          </Stack.Navigator>
+            <Tab.Screen name="Info" component={SignInScreen} />
+            <Tab.Screen name="Sessions" component={SessionListScreen} />
+            <Tab.Screen name="Profile" component={ProfileScreen} />
+          </Tab.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </StateContext.Provider>
