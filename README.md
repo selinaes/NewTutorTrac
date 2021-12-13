@@ -23,10 +23,9 @@ Our next steps:
 6. Testing
 
 ### Currently not working (compared to Work Plan for Alpha)
-1. Session card: currently the main session card is the same as the simplified one
-2. Profile picture: we have not yet added profile picture in ProfileScreen 
-3. Session detail screen: card can be clicked, but will not lead to a detail screen (because we have not yet implemented it)
-4. Sorting not working: session listing sorting attempted, but had some issue
+1. Session card: currently the main session card is missing details like capacity gauge and link support
+2. Profile picture: we have not yet added profile pictures in ProfileScreen or Session Detail screen
+3. Session detail screen: main session card (not yet simplified session card) can be clicked to navigate to detail screen, but that screen's style and functionality are mostly unimplemented
 
 ### Changes to Revised Plan
 1. We are changing from Google authentification to email-password authentification
