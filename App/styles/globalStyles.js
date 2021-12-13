@@ -6,23 +6,23 @@ export const globalStyles = StyleSheet.create({
     screen: {
       flex: 1,
       paddingTop: Constants.statusBarHeight,
-      alignItems: "stretch",
+      alignItems: "center",
       justifyContent: "space-between",
       backgroundColor: "#fff",
-    }, 
+    },
     loginLogoutPane: {
         flex: 3, 
         alignItems: 'center',
         justifyContent: 'center',
-    }, 
+    },
     labeledInput: {
         width: "100%",
         alignItems: 'center',
         justifyContent: 'center',
-    }, 
+    },
     inputLabel: {
         fontSize: 20,
-    }, 
+    },
     textInput: {
         width: "80%",
         fontSize: 20,
@@ -37,7 +37,6 @@ export const globalStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-  
     },
     verticalButtonHolder: {
         flexDirection: 'column',
@@ -61,15 +60,18 @@ export const globalStyles = StyleSheet.create({
         letterSpacing: 0.25,
         color: 'white',
     },
+    card: {
+        marginBottom: 15,
+    },
     errorBox: {
         width: '80%',
         borderWidth: 1,
-        borderStyle: 'dashed', // Lyn sez: doesn't seem to work 
+        borderStyle: 'dashed', // Lyn sez: doesn't seem to work
         borderColor: 'red',
     },
     errorMessage: {
         color: 'red',
-        padding: 10, 
+        padding: 10,
     },
     hidden: {
         display: 'none',
@@ -115,7 +117,7 @@ export const globalStyles = StyleSheet.create({
       justifyContent: "flex-start",
       alignItems:"flex-start",
       flexWrap:"wrap",
-      backgroundColor: "gray",
+      backgroundColor: "white",
       width: '100%'
     },
     scrollView: {

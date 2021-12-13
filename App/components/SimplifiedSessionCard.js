@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Subheading, Card, Title, Paragraph } from "react-native-paper";
+import TimeDisplay from "./TimeDisplay.js";
 
 //A single simplified session card
 export default function SimplifiedSessionCard(props) {
@@ -10,7 +11,7 @@ export default function SimplifiedSessionCard(props) {
         <Card.Content>
           <Subheading>{props.subtitle}</Subheading>
           <Title>{props.title}</Title>
-          <Paragraph>{props.content}</Paragraph>
+          <TimeDisplay date={props.content}/>
         </Card.Content>
       </Card>
     </TouchableOpacity>
@@ -23,6 +24,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     width: 300,
     margin: 3,
+    marginBottom: 10,
     textAlign: "center",
     backgroundColor: "white",
   },

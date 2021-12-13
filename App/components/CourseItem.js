@@ -15,6 +15,6 @@ const styles = StyleSheet.create({
     width: 120,
     margin: 3,
     textAlign: "center",
-    backgroundColor: "white",
+    backgroundColor: "coral",
   },
 });

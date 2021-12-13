@@ -21,6 +21,7 @@ import {
   // for logging out:
   signOut,
 } from "firebase/auth";
+const data = require("../data.json");
 
 const firebaseConfig = {
   apiKey: "AIzaSyCtvvMpb2icR7di4hyGnD7Wg76hussiBYk",
@@ -36,6 +37,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
+const selectSignedInUser = true;
 function emailOf(user) {
   if (user) {
     return user.email;
@@ -115,7 +117,7 @@ export default function SignInScreen(props) {
         // console.log(`createUserWithEmailAndPassword: setCredential`);
         // setCredential(userCredential);
 
-        // Send verication email
+        // Send verification email
         console.log(
           "signUpUserEmailPassword: about to send verification email"
         );
@@ -172,9 +174,13 @@ export default function SignInScreen(props) {
         // Only log in auth.currentUser if their email is verified
         checkEmailVerification();
 
+        if(selectSignedInUser == true) {
+          signedInProps.setSelectedUser(data.users.filter(user => user.email === email)[0]);
+        }
+
         // Clear email/password inputs
-        setEmail("");
-        setPassword("");
+        //setEmail("");
+        //setPassword("");
 
         // Note: could store userCredential here if wanted it later ...
         // console.log(`createUserWithEmailAndPassword: setCredential`);
@@ -221,6 +227,7 @@ export default function SignInScreen(props) {
     console.log(`logOut: setLoggedInUser(null)`);
     setLoggedInUser(null);
     console.log("logOut: signOut(auth)");
+    signedInProps.setSelectedUser(data.users[0]);
     signOut(auth); // Will eventually set auth.currentUser to null
   }
 

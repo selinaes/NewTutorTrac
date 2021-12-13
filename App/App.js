@@ -40,7 +40,12 @@ export default function App() {
   const [errorMsg, setErrorMsg] = React.useState("");
   const [loggedInUser, setLoggedInUser] = React.useState(null);
 
-  const signedInProps = {
+  // State for tutoring sessions
+
+  // State for users & profile
+  const [selectedUser, setSelectedUser] = React.useState(data.users[0]);// React.useState(loggedInUserProfile? loggedInUserProfile:data.users[0]); //for testing
+
+    const signedInProps = {
     email,
     setEmail,
     password,
@@ -50,19 +55,9 @@ export default function App() {
     loggedInUser,
     setLoggedInUser,
     displayStates,
+    selectedUser,
+    setSelectedUser
   };
-
-  // State for tutoring sessions
-
-  // State for users & profile
-  const [selectedUser, setSelectedUser] = React.useState({
-    UID: 1,
-    name: "Quemby Burke",
-    email: "qb1@wellesley.edu",
-    classyear: 2024,
-    courses: [0, 1, 2, 3],
-    attendedSID: [8, 9],
-  }); //for testing
 
   const profileProps = { selectedUser, setSelectedUser };
   const sessionsProps = { selectedUser, setSelectedUser };

@@ -72,31 +72,43 @@ export default function ProfileScreen(props) {
   return (
     <View style={globalStyles.screen}>
       <ScrollView style={globalStyles.scrollView}>
-        {/* <Text style={globalStyles.json}>props: {formatJSON(props)}</Text> */}
         <Headline>Personal Profile</Headline>
         {displayPersonalInfo()}
         <Headline>Registered Courses</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.courses.slice(1, 5).map((course) => (
+          {profileProps.selectedUser.courses.map((id) => (
             <CourseItem
-              key={course}
-              department={course.department}
-              number={course.number}
+              key={id}
+              department={data.courses[id].department}
+              number={data.courses[id].number}
             ></CourseItem>
           ))}
         </View>
+
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions.slice(0, 2).map((session) => (
+          {data.sessions.filter(session => session.attendedUID.includes(profileProps.selectedUser.UID)).map((session) => (
             <SimplifiedSessionCard
               subtitle={data.users[session.tutor].name}
               title={
                 session.type +
-                ": " +
-                session.courses.map(
-                  (index) =>
-                    data.courses[index].department + data.courses[index].number
-                )
+                  ": " +
+                  data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
+              }
+              content={session.startTime}
+            ></SimplifiedSessionCard>
+          ))}
+        </View>
+
+        <Headline>Hosted Sessions</Headline>
+        <View style={globalStyles.courseContainer}>
+          {data.sessions.filter(session => session.tutor === profileProps.selectedUser.UID).map((session) => (
+          <SimplifiedSessionCard
+              subtitle={data.users[session.tutor - 1].name}
+              title={
+                session.type +
+                  ": " +
+                  data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
               }
               content={session.startTime}
             ></SimplifiedSessionCard>

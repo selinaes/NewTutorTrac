@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, Text } from "react-native";
 import { Card, Title, Paragraph, Subheading } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 const data = require("../data.json");
+import TimeDisplay from "./TimeDisplay.js";
 
 
 //copied from simplified sessions card, need to modify
@@ -19,6 +20,8 @@ export default function SessionCard(props) {
           <Subheading>{props.subtitle}</Subheading>
           <Title>{props.title}</Title>
           <Paragraph>{props.content}</Paragraph>
+          <TimeDisplay date={props.data.startTime} />
+          <Text>{props.data.location}</Text>
         </Card.Content>
       </Card>
     </TouchableOpacity>
@@ -31,6 +34,7 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     width: 300,
     margin: 3,
+    marginBottom: 20,
     textAlign: "center",
     backgroundColor: "white",
   },
