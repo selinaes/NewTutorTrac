@@ -31,8 +31,9 @@ function SessionsList(props) {
     <View style={globalStyles.screen}>
       <ScrollView>
         <Headline>Today's Sessions</Headline>
-        {((daySessions[0]).map((session) => (
+        {((daySessions[0]).map((session, index) => (
           <SessionCard
+                key={index}
                 subtitle={data.users[session.tutor - 1].name}
                 title={
                   session.type + ": " + data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
@@ -55,8 +56,9 @@ function SessionsList(props) {
         )))}
 
         <Headline>Future Sessions</Headline>
-        {(daySessions.slice(1)).map( (day) => (day.map((session) => (
+        {(daySessions.slice(1)).map( (day) => (day.map((session, index) => (
           <SimplifiedSessionCard
+              key ={index}
               subtitle={data.users[session.tutor - 1].name}
               title={
                 session.type +

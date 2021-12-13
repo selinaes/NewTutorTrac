@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
-import { Headline, Paragraph, BottomNavigation } from "react-native-paper";
+import { Headline, Paragraph, BottomNavigation, Avatar } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
@@ -72,7 +72,7 @@ export default function ProfileScreen(props) {
   return (
     <View style={globalStyles.screen}>
       <ScrollView style={globalStyles.scrollView}>
-        <Headline>Personal Profile</Headline>
+        <Avatar.Text size={150} label={profileProps.selectedUser.email.slice(0,2).toUpperCase() } />
         {displayPersonalInfo()}
         <Headline>Registered Courses</Headline>
         <View style={globalStyles.courseContainer}>
@@ -87,8 +87,9 @@ export default function ProfileScreen(props) {
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions.filter(session => session.attendedUID.includes(profileProps.selectedUser.UID)).map((session) => (
+          {data.sessions.filter(session => session.attendedUID.includes(profileProps.selectedUser.UID)).map((session, index) => (
             <SimplifiedSessionCard
+              key={index}
               subtitle={data.users[session.tutor].name}
               title={
                 session.type +
@@ -102,8 +103,9 @@ export default function ProfileScreen(props) {
 
         <Headline>Hosted Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions.filter(session => session.tutor === profileProps.selectedUser.UID).map((session) => (
+          {data.sessions.filter(session => session.tutor === profileProps.selectedUser.UID).map((session, index) => (
           <SimplifiedSessionCard
+              key={index}
               subtitle={data.users[session.tutor - 1].name}
               title={
                 session.type +
