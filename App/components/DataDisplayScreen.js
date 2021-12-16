@@ -10,6 +10,7 @@ export default function DataDisplayScreen(props) {
 
     return (
       <View>
+            
             <View>{Object.entries(selectedProps).map(pair => <Text key={pair}>{pair[0]}: {pair[1]}</Text>)}</View>
             <View>{(selectedProps.attendedUID).map(UID => <Avatar.Text size={48} key={UID} label={data.users[UID - 1].email.slice(0,2).toUpperCase() } />)}</View>
             <Button title="Check In"></Button>

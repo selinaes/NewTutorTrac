@@ -4,8 +4,9 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity,
+  TouchableOpacity, ScrollView
 } from "react-native";
+import { Appbar } from 'react-native-paper';
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import SignedInDisplay from "./SignedInDisplay.js";
@@ -287,12 +288,17 @@ export default function SignInScreen(props) {
 
   return (
     <View style={globalStyles.screen}>
+      <Appbar.Header>
+        <Appbar.Content title="Info" />
+      </Appbar.Header>
+      <ScrollView style={globalStyles.scrollView}>
       {loginPane()}
       <SignedInDisplay
         signOutUser={logOut}
         navigation={props.navigation}
       ></SignedInDisplay>
       {signedInProps.displayStates()}
+      </ScrollView>
     </View>
   );
 }

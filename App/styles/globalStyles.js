@@ -5,8 +5,8 @@ import Constants from 'expo-constants';
 export const globalStyles = StyleSheet.create({
     screen: {
       flex: 1,
-      paddingTop: Constants.statusBarHeight,
-      alignItems: "center",
+      paddingTop: 0,
+      alignItems: "stretch",
       justifyContent: "space-between",
       backgroundColor: "#fff",
     },

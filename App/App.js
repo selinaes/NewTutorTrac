@@ -10,7 +10,7 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import StateContext from "./components/StateContext.js";
 import { globalStyles } from "./styles/globalStyles.js";
@@ -43,9 +43,9 @@ export default function App() {
   // State for tutoring sessions
 
   // State for users & profile
-  const [selectedUser, setSelectedUser] = React.useState(data.users[0]);// React.useState(loggedInUserProfile? loggedInUserProfile:data.users[0]); //for testing
+  const [selectedUser, setSelectedUser] = React.useState(data.users[0]); // React.useState(loggedInUserProfile? loggedInUserProfile:data.users[0]); //for testing
 
-    const signedInProps = {
+  const signedInProps = {
     email,
     setEmail,
     password,
@@ -56,12 +56,12 @@ export default function App() {
     setLoggedInUser,
     displayStates,
     selectedUser,
-    setSelectedUser
+    setSelectedUser,
   };
 
   const profileProps = { selectedUser, setSelectedUser };
   const sessionsProps = { selectedUser, setSelectedUser };
-  const selectedProps =  data.sessions[0];
+  const selectedProps = data.sessions[0];
 
   /***************************************************************************
    RENDERING DEBUGGING INFO
@@ -87,7 +87,12 @@ export default function App() {
    TOP LEVEL RENDERING
    ***************************************************************************/
 
-  const screenProps = { signedInProps, profileProps, sessionsProps, selectedProps };
+  const screenProps = {
+    signedInProps,
+    profileProps,
+    sessionsProps,
+    selectedProps,
+  };
 
   return (
     <StateContext.Provider value={screenProps}>
@@ -95,7 +100,10 @@ export default function App() {
         <NavigationContainer>
           <StatusBar style="auto" />
           <Tab.Navigator
-            screenOptions={{ headerStyle: { backgroundColor: "coral" } }}
+            screenOptions={{
+              headerStyle: { backgroundColor: "coral" },
+              headerShown: false,
+            }}
             initialRouteName="Sessions"
           >
             <Tab.Screen name="Info" component={SignInScreen} />

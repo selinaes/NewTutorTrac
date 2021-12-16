@@ -1,6 +1,12 @@
 import React, { useContext } from "react";
 import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
-import { Headline, Paragraph, BottomNavigation, Avatar } from "react-native-paper";
+import {
+  Headline,
+  Paragraph,
+  BottomNavigation,
+  Avatar,
+  Appbar,
+} from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
@@ -71,8 +77,14 @@ export default function ProfileScreen(props) {
 
   return (
     <View style={globalStyles.screen}>
+      <Appbar.Header>
+        <Appbar.Content title="Profile" />
+      </Appbar.Header>
       <ScrollView style={globalStyles.scrollView}>
-        <Avatar.Text size={150} label={profileProps.selectedUser.email.slice(0,2).toUpperCase() } />
+        <Avatar.Text
+          size={150}
+          label={profileProps.selectedUser.email.slice(0, 2).toUpperCase()}
+        />
         {displayPersonalInfo()}
         <Headline>Registered Courses</Headline>
         <View style={globalStyles.courseContainer}>
@@ -87,36 +99,61 @@ export default function ProfileScreen(props) {
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions.filter(session => session.attendedUID.includes(profileProps.selectedUser.UID)).map((session, index) => (
-            <SimplifiedSessionCard
-              key={index}
-              subtitle={data.users[session.tutor].name}
-              title={
-                session.type +
+          {data.sessions
+            .filter((session) =>
+              session.attendedUID.includes(profileProps.selectedUser.UID)
+            )
+            .map((session, index) => (
+              <SimplifiedSessionCard
+                key={index}
+                subtitle={data.users[session.tutor].name}
+                title={
+                  session.type +
                   ": " +
-                  data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
-              }
-              content={session.startTime}
-            ></SimplifiedSessionCard>
-          ))}
+                  data.courses[session.courses[0]].department +
+                  " " +
+                  (session.type == "Cafe"
+                    ? ""
+                    : data.courses[session.courses[0]].number)
+                }
+                content={session.startTime}
+              ></SimplifiedSessionCard>
+            ))}
         </View>
 
         <Headline>Hosted Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions.filter(session => session.tutor === profileProps.selectedUser.UID).map((session, index) => (
-          <SimplifiedSessionCard
-              key={index}
-              subtitle={data.users[session.tutor - 1].name}
-              title={
-                session.type +
+          {data.sessions
+            .filter(
+              (session) => session.tutor === profileProps.selectedUser.UID
+            )
+            .map((session, index) => (
+              <SimplifiedSessionCard
+                key={index}
+                subtitle={data.users[session.tutor - 1].name}
+                title={
+                  session.type +
                   ": " +
-                  data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
-              }
-              content={session.startTime}
-            ></SimplifiedSessionCard>
-          ))}
+                  data.courses[session.courses[0]].department +
+                  " " +
+                  (session.type == "Cafe"
+                    ? ""
+                    : data.courses[session.courses[0]].number)
+                }
+                content={session.startTime}
+              ></SimplifiedSessionCard>
+            ))}
         </View>
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  top: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+  },
+});

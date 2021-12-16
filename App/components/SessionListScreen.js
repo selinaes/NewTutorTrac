@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
 import { globalStyles } from "../styles/globalStyles.js";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Headline, Paragraph, BottomNavigation } from "react-native-paper";
 import DataDisplayScreen from "./DataDisplayScreen.js";
@@ -22,52 +22,76 @@ function SessionsList(props) {
    SESSIONS FUNCTIONALITY CODE
    ***************************************************************************/
   var weeklySchedule = [0, 1, 2, 3, 4, 5, 6];
-  const sessionList = (data.sessions.filter(
-    (session) => sessionsProps.selectedUser.courses.some(c => session.courses.includes(c)))).sort(
-      (a, b) => new Date(a.startTime) - new Date(b.startTime));
-  const daySessions = weeklySchedule.map(x => sessionList.filter(session => (new Date(session.startTime).getDay() - today + 7) % 7 == x))
+  const sessionList = data.sessions
+    .filter((session) =>
+      sessionsProps.selectedUser.courses.some((c) =>
+        session.courses.includes(c)
+      )
+    )
+    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+  const daySessions = weeklySchedule.map((x) =>
+    sessionList.filter(
+      (session) => (new Date(session.startTime).getDay() - today + 7) % 7 == x
+    )
+  );
 
   return (
     <View style={globalStyles.screen}>
-      <ScrollView>
+      <ScrollView style={globalStyles.scrollView}>
         <Headline>Today's Sessions</Headline>
-        {((daySessions[0]).map((session, index) => (
+        {daySessions[0].map((session, index) => (
           <SessionCard
+            key={index}
+            subtitle={data.users[session.tutor - 1].name}
+            title={
+              session.type +
+              ": " +
+              data.courses[session.courses[0]].department +
+              " " +
+              (session.type == "Cafe"
+                ? ""
+                : data.courses[session.courses[0]].number)
+            }
+            action={(session) => {
+              screenProps.selectedProps = session;
+              props.navigation.navigate("Session Details");
+            }}
+            data={session}
+            content={
+              <View style={globalStyles.courseContainer}>
+                {session.courses.map((course) => (
+                  <CourseItem
+                    key={course}
+                    department={data.courses[course].department}
+                    number={data.courses[course].number}
+                  ></CourseItem>
+                ))}
+              </View>
+            }
+          ></SessionCard>
+        ))}
+
+        <Headline>Future Sessions</Headline>
+        {daySessions
+          .slice(1)
+          .map((day) =>
+            day.map((session, index) => (
+              <SimplifiedSessionCard
                 key={index}
                 subtitle={data.users[session.tutor - 1].name}
                 title={
-                  session.type + ": " + data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
-                }
-                action={(session) => {
-                  screenProps.selectedProps = session;
-                  props.navigation.navigate("Session Details");
-                }}
-                data={session}
-                content={ <View style={globalStyles.courseContainer}>
-                    {session.courses.map((course) => (
-                      <CourseItem
-                        key={course}
-                        department={data.courses[course].department}
-                        number={data.courses[course].number}
-                      ></CourseItem>
-                    ))}
-                  </View>}
-            ></SessionCard>
-        )))}
-
-        <Headline>Future Sessions</Headline>
-        {(daySessions.slice(1)).map( (day) => (day.map((session, index) => (
-          <SimplifiedSessionCard
-              key ={index}
-              subtitle={data.users[session.tutor - 1].name}
-              title={
-                session.type +
+                  session.type +
                   ": " +
-                  data.courses[session.courses[0]].department + " " + (session.type == "Cafe"? "": data.courses[session.courses[0]].number)
-              }
-              content={session.startTime}
-            ></SimplifiedSessionCard>
-        ))))}
+                  data.courses[session.courses[0]].department +
+                  " " +
+                  (session.type == "Cafe"
+                    ? ""
+                    : data.courses[session.courses[0]].number)
+                }
+                content={session.startTime}
+              ></SimplifiedSessionCard>
+            ))
+          )}
       </ScrollView>
     </View>
   );
@@ -77,10 +101,12 @@ const Stack = createNativeStackNavigator();
 
 export default function SessionListScreen(props) {
   return (
-          <Stack.Navigator
+    <Stack.Navigator
       initialRouteName="My Sessions"
-          >
-            <Stack.Screen name="My Sessions" component={SessionsList} />
-            <Stack.Screen name="Session Details" component={DataDisplayScreen} />
-          </Stack.Navigator>);
+      screenOptions={{ headerStyle: { backgroundColor: "#f1c40f" } }}
+    >
+      <Stack.Screen name="My Sessions" component={SessionsList} />
+      <Stack.Screen name="Session Details" component={DataDisplayScreen} />
+    </Stack.Navigator>
+  );
 }
