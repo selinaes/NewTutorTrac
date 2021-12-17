@@ -4,9 +4,10 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity, ScrollView
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
-import { Appbar } from 'react-native-paper';
+import { Appbar } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import SignedInDisplay from "./SignedInDisplay.js";
@@ -175,8 +176,10 @@ export default function SignInScreen(props) {
         // Only log in auth.currentUser if their email is verified
         checkEmailVerification();
 
-        if(selectSignedInUser) {
-          signedInProps.setSelectedUser(data.users.filter(user => user.email === email)[0]);
+        if (selectSignedInUser) {
+          signedInProps.setSelectedUser(
+            data.users.filter((user) => user.email === email)[0]
+          );
         }
 
         // Clear email/password inputs
@@ -292,12 +295,12 @@ export default function SignInScreen(props) {
         <Appbar.Content title="Info" />
       </Appbar.Header>
       <ScrollView style={globalStyles.scrollView}>
-      {loginPane()}
-      <SignedInDisplay
-        signOutUser={logOut}
-        navigation={props.navigation}
-      ></SignedInDisplay>
-      {signedInProps.displayStates()}
+        {loginPane()}
+        <SignedInDisplay
+          signOutUser={logOut}
+          navigation={props.navigation}
+        ></SignedInDisplay>
+        {signedInProps.displayStates()}
       </ScrollView>
     </View>
   );
