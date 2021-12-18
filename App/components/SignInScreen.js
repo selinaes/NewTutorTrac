@@ -99,7 +99,7 @@ export default function SignInScreen(props) {
     ***************************************************************************/
 
   async function addCourseDoc() {
-    // Add a new document in collection "messages"
+    // Add a new document in collection "courses"
     await setDoc(doc(db, "courses", "2"), {
       department: "PSYC",
       number: "101",
