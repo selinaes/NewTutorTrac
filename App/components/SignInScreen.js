@@ -23,6 +23,18 @@ import {
   // for logging out:
   signOut,
 } from "firebase/auth";
+import {
+  // access to Firestore storage features:
+  getFirestore,
+  // for storage access
+  collection,
+  doc,
+  addDoc,
+  setDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 const data = require("../data.json");
 
 const firebaseConfig = {
@@ -38,6 +50,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp); // *** new for Firestore
 
 const selectSignedInUser = true;
 function emailOf(user) {
@@ -69,6 +82,7 @@ export default function SignInScreen(props) {
     );
     console.log(`on mount: emailOf(loggedInUser)=${emailOf(loggedInUser)}`);
     checkEmailVerification();
+    addCourseDoc();
     return () => {
       // Anything in here is fired on component unmount.
       console.log("Component did unmount");
@@ -80,9 +94,23 @@ export default function SignInScreen(props) {
   }, []);
 
   /***************************************************************************
+     FIRESTORE CODE
+
+    ***************************************************************************/
+
+  async function addCourseDoc() {
+    // Add a new document in collection "messages"
+    await setDoc(doc(db, "courses", "2"), {
+      department: "PSYC",
+      number: "101",
+    });
+  }
+
+  /***************************************************************************
      AUTHENTICATION CODE
 
     ***************************************************************************/
+
   // Clear error message when email is updated to be nonempty
   useEffect(() => {
     if (email != "") setErrorMsg("");

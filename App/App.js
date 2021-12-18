@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  LogBox,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -30,6 +31,11 @@ function formatJSON(jsonVal) {
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  LogBox.ignoreLogs([
+    "Setting a timer",
+    "AsyncStorage", // While we're at it, squelch AyncStorage, too!
+  ]);
+
   /***************************************************************************
    INITIALIZATION
    ***************************************************************************/
