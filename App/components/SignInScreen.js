@@ -34,6 +34,7 @@ import {
   query,
   where,
   getDocs,
+  writeBatch,
 } from "firebase/firestore";
 const data = require("../data.json");
 
@@ -82,7 +83,7 @@ export default function SignInScreen(props) {
     );
     console.log(`on mount: emailOf(loggedInUser)=${emailOf(loggedInUser)}`);
     checkEmailVerification();
-    addCourseDoc();
+    // batchWriteOriginal();
     return () => {
       // Anything in here is fired on component unmount.
       console.log("Component did unmount");
@@ -98,13 +99,59 @@ export default function SignInScreen(props) {
 
     ***************************************************************************/
 
-  async function addCourseDoc() {
-    // Add a new document in collection "courses"
-    await setDoc(doc(db, "courses", "2"), {
-      department: "PSYC",
-      number: "101",
-    });
-  }
+  // async function addCourseDoc() {
+  //   // Add a new document in collection "courses"
+  //   await setDoc(doc(db, "courses", "2"), {
+  //     department: "PSYC",
+  //     number: "101",
+  //   });
+  // }
+
+  // async function batchWriteOriginal() {
+  //   // Get a new write batch
+  //   const batch = writeBatch(db);
+
+  //   // Set the values for 'courses'
+  //   data.courses.forEach((course, index) => {
+  //     const courseRef = doc(db, "courses", index.toString());
+  //     batch.set(courseRef, {
+  //       department: course.department,
+  //       number: course.number,
+  //     });
+  //   });
+
+  //   // Set the values for 'users'
+  //   data.users.forEach((user) => {
+  //     const userRef = doc(db, "users", user.UID.toString());
+  //     batch.set(userRef, {
+  //       classyear: user.classyear,
+  //       email: user.email,
+  //       name: user.name,
+  //       courses: user.courses,
+  //     });
+  //   });
+
+  //   // Set the values for 'sessions'
+  //   data.sessions.forEach((session) => {
+  //     const sessionRef = doc(db, "sessions", session.SID.toString());
+  //     batch.set(sessionRef, {
+  //       attendedUID: session.attendedUID,
+  //       courses: session.courses,
+  //       department: session.department,
+  //       startTime: session.startTime,
+  //       endTime: session.endTime,
+  //       location: session.location,
+  //       maxCapacity: session.maxCapacity,
+  //       recurring: session.recurring,
+  //       recurringDay: session.recurringDay,
+  //       tutor: session.tutor,
+  //       type: session.type,
+  //     });
+  //   });
+
+  //   // Commit the batch
+  //   await batch.commit();
+  // }
 
   /***************************************************************************
      AUTHENTICATION CODE
