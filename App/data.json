@@ -268,7 +268,7 @@
       "department": "ECON",
       "endTime": "2021-12-14T11:00:00",
       "type": "OH",
-      "maxcapacity": 7
+      "maxCapacity": 7
     },
     {
       "recurringDay": "R",
@@ -282,7 +282,7 @@
       "department": "REL",
       "endTime": "2021-12-16T21:00:00",
       "type": "Cafe",
-      "maxcapacity": 20
+      "maxCapacity": 20
     },
     {
       "recurringDay": "T",
@@ -296,7 +296,7 @@
       "department": "CS",
       "endTime": "2021-12-14T10:00:00",
       "type": "Cafe",
-      "maxcapacity": 9
+      "maxCapacity": 9
     },
     {
       "recurringDay": "R",
@@ -310,7 +310,7 @@
       "department": "JPN",
       "endTime": "2021-12-16T16:00:00",
       "type": "Cafe",
-      "maxcapacity": 19
+      "maxCapacity": 19
     },
     {
       "recurringDay": "T",
@@ -324,7 +324,7 @@
       "department": "SPAN",
       "endTime": "2021-12-14T14:00:00",
       "type": "SI",
-      "maxcapacity": 20
+      "maxCapacity": 20
     },
     {
       "recurringDay": "W",
@@ -338,7 +338,7 @@
       "department": "ECON",
       "endTime": "2021-12-15T12:00:00",
       "type": "SI",
-      "maxcapacity": 7
+      "maxCapacity": 7
     },
     {
       "recurringDay": "W",
@@ -352,7 +352,7 @@
       "department": "AFR",
       "endTime": "2021-12-15T15:00:00",
       "type": "Cafe",
-      "maxcapacity": 12
+      "maxCapacity": 12
     },
     {
       "recurringDay": "F",
@@ -366,7 +366,7 @@
       "department": "CHEM",
       "endTime": "2021-12-17T18:00:00",
       "type": "Cafe",
-      "maxcapacity": 23
+      "maxCapacity": 23
     },
     {
       "recurringDay": "R",
@@ -380,7 +380,7 @@
       "department": "BISC",
       "endTime": "2021-12-16T20:00:00",
       "type": "OH",
-      "maxcapacity": 24
+      "maxCapacity": 24
     },
     {
       "recurringDay": "F",
@@ -394,7 +394,7 @@
       "department": "ECON",
       "endTime": "2021-12-17T12:00:00",
       "type": "Cafe",
-      "maxcapacity": 12
+      "maxCapacity": 12
     },
     {
       "recurringDay": "T",
@@ -408,7 +408,7 @@
       "department": "AFR",
       "endTime": "2021-12-14T15:00:00",
       "type": "SI",
-      "maxcapacity": 30
+      "maxCapacity": 30
     },
     {
       "recurringDay": "R",
@@ -422,7 +422,7 @@
       "department": "BIOC",
       "endTime": "2021-12-16T18:00:00",
       "type": "SI",
-      "maxcapacity": 7
+      "maxCapacity": 7
     },
     {
       "recurringDay": "T",
@@ -436,7 +436,7 @@
       "department": "",
       "endTime": "2021-12-14T19:00:00",
       "type": "OH",
-      "maxcapacity": 20
+      "maxCapacity": 20
     },
     {
       "recurringDay": "T",
@@ -450,7 +450,7 @@
       "department": "ECON",
       "endTime": "2021-12-14T12:00:00",
       "type": "OH",
-      "maxcapacity": 14
+      "maxCapacity": 14
     },
     {
       "recurringDay": "W",
@@ -464,7 +464,7 @@
       "department": "ECON",
       "endTime": "2021-12-15T16:00:00",
       "type": "OH",
-      "maxcapacity": 7
+      "maxCapacity": 7
     },
     {
       "recurringDay": "R",
@@ -478,7 +478,7 @@
       "department": "BISC",
       "endTime": "2021-12-16T16:00:00",
       "type": "Cafe",
-      "maxcapacity": 9
+      "maxCapacity": 9
     },
     {
       "recurringDay": "T",
@@ -492,7 +492,7 @@
       "department": "PEAC",
       "endTime": "2021-12-14T13:00:00",
       "type": "Cafe",
-      "maxcapacity": 9
+      "maxCapacity": 9
     },
     {
       "recurringDay": "F",
@@ -506,7 +506,7 @@
       "department": "",
       "endTime": "2021-12-17T20:00:00",
       "type": "OH",
-      "maxcapacity": 22
+      "maxCapacity": 22
     },
     {
       "recurringDay": "T",
@@ -520,7 +520,7 @@
       "department": "AMST",
       "endTime": "2021-12-14T13:00:00",
       "type": "OH",
-      "maxcapacity": 6
+      "maxCapacity": 6
     },
     {
       "recurringDay": "R",
@@ -534,7 +534,7 @@
       "department": "WRIT",
       "endTime": "2021-12-16T18:00:00",
       "type": "OH",
-      "maxcapacity": 25
+      "maxCapacity": 25
     },
     {
       "recurringDay": "W",
@@ -548,7 +548,7 @@
       "department": "AMST",
       "endTime": "2021-12-15T16:00:00",
       "type": "Cafe",
-      "maxcapacity": 14
+      "maxCapacity": 14
     },
     {
       "recurringDay": "T",
@@ -562,7 +562,7 @@
       "department": "CHEM",
       "endTime": "2021-12-14T15:00:00",
       "type": "SI",
-      "maxcapacity": 11
+      "maxCapacity": 11
     },
     {
       "recurringDay": "F",
@@ -576,7 +576,7 @@
       "department": "MUS",
       "endTime": "2021-12-17T15:00:00",
       "type": "OH",
-      "maxcapacity": 29
+      "maxCapacity": 29
     },
     {
       "recurringDay": "R",
@@ -590,7 +590,7 @@
       "department": "WRIT",
       "endTime": "2021-12-16T21:00:00",
       "type": "Cafe",
-      "maxcapacity": 8
+      "maxCapacity": 8
     },
     {
       "recurringDay": "R",
@@ -604,7 +604,7 @@
       "department": "WRIT",
       "endTime": "2021-12-16T17:00:00",
       "type": "SI",
-      "maxcapacity": 27
+      "maxCapacity": 27
     },
     {
       "recurringDay": "F",
@@ -618,7 +618,7 @@
       "department": "ENG",
       "endTime": "2021-12-17T14:00:00",
       "type": "OH",
-      "maxcapacity": 16
+      "maxCapacity": 16
     },
     {
       "recurringDay": "W",
@@ -632,7 +632,7 @@
       "department": "POL2",
       "endTime": "2021-12-15T17:00:00",
       "type": "OH",
-      "maxcapacity": 14
+      "maxCapacity": 14
     },
     {
       "recurringDay": "T",
@@ -646,7 +646,7 @@
       "department": "AMST",
       "endTime": "2021-12-17T16:00:00",
       "type": "Cafe",
-      "maxcapacity": 23
+      "maxCapacity": 23
     },
     {
       "recurringDay": "M",
@@ -660,7 +660,7 @@
       "department": "CS",
       "endTime": "2021-12-17T13:00:00",
       "type": "OH",
-      "maxcapacity": 26
+      "maxCapacity": 26
     },
     {
       "recurringDay": "M",
@@ -674,7 +674,7 @@
       "department": "BIOC",
       "endTime": "2021-12-16T13:00:00",
       "type": "OH",
-      "maxcapacity": 10
+      "maxCapacity": 10
     }
   ]
 }

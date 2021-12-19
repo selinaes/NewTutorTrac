@@ -58,12 +58,12 @@ function SessionsList(props) {
             }}
             data={session}
             content={
-              <View style={globalStyles.courseContainer}>
-                {session.courses.map((course) => (
+                  <View style={globalStyles.courseContainer}>
+                {session.courses.map((id) => (
                   <CourseItem
-                    key={course}
-                    department={data.courses[course].department}
-                    number={data.courses[course].number}
+                    key={id}
+                    department={data.courses[id].department}
+                    number={data.courses[id].number}
                   ></CourseItem>
                 ))}
               </View>
