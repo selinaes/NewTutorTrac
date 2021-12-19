@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, TouchableOpacity, Text, View } from "react-native";
 import {
   Card,
   Title,
@@ -24,7 +24,7 @@ export default function SessionCard(props) {
         <Card.Content>
           <Subheading>{props.subtitle}</Subheading>
           <Title>{props.title}</Title>
-          <Surface>{props.content}</Surface>
+          <View>{props.content}</View>
           <TimeDisplay date={props.data.startTime} />
           <Text>{props.data.location}</Text>
         </Card.Content>

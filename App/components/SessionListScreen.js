@@ -19,7 +19,7 @@ function SessionsList(props) {
   const today = 2; // new Date(now()).getDay
 
   /***************************************************************************
-   SESSIONS FUNCTIONALITY CODE
+  SESSIONS FUNCTIONALITY CODE
    ***************************************************************************/
   var weeklySchedule = [0, 1, 2, 3, 4, 5, 6];
   const sessionList = data.sessions
