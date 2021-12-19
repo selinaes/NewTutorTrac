@@ -7,12 +7,13 @@ import DetailedSessionCard from "./DetailedSessionCard.js";
 import CourseItem from "./CourseItem.js";
 import { globalStyles } from "../styles/globalStyles.js";
 
+const testDate = true;
+
 export default function DataDisplayScreen(props) { 
   const screenProps = useContext(StateContext);
-  const selectedProps = screenProps.selectedProps;
+  var selectedProps = data.sessions[screenProps.selectedProps - 1];
 
   const attendsCourseLog = [];
-  
   const attendees = selectedProps.courses.map(course => ({
     title: data.courses[course].department + " " + data.courses[course].number,
     data: selectedProps.attendedUID.filter((user) => {
@@ -22,14 +23,12 @@ export default function DataDisplayScreen(props) {
     })
   }
   ));
-
   attendees.push({ title: "OTHER", data: selectedProps.attendedUID.filter(user => !attendsCourseLog.includes(user)) })
   
-  const Item = ({ title }) => (
-  <View>
-    <Text>{title}</Text>
-  </View>
-);
+  const now = new Date(Date.now());
+  const start = testDate? now : new Date(selectedProps.startTime);
+  const end = testDate? now : new Date(selectedProps.endTime);
+  
     
   return (
     <View style={globalStyles.screen}>
@@ -58,6 +57,7 @@ export default function DataDisplayScreen(props) {
             }
       ></DetailedSessionCard>
       <SafeAreaView>
+        <Text>Attendees</Text>
         <SectionList
           sections={attendees}
           keyExtractor={(item) => item}
@@ -65,24 +65,27 @@ export default function DataDisplayScreen(props) {
             <Avatar.Text
               size={48}
               key = {item}
-              label={data.users[item - 1].email.slice(0, 2).toUpperCase()}
+              label={data.users[item-1].email.slice(0, 2).toUpperCase()}
           />}
           renderSectionHeader={({ section: { title } }) => (
             <Text>{title}</Text>
           )}
         />
       </SafeAreaView>
-      <Button title="Check In"></Button>
+      <View>{((start.getDay() == now.getDay()) && (start.getHours() <= now.getHours() <= end.getHours()) ?
+        (selectedProps.attendedUID.includes(screenProps.profileProps.selectedUser.UID)?
+          (<Button onPress={() => {
+            let uidIndex = data.sessions[selectedProps.SID - 1].attendedUID.indexOf(screenProps.profileProps.selectedUser.UID);
+            data.sessions[selectedProps.SID - 1].attendedUID.splice(uidIndex, uidIndex);
+            selectedProps = data.sessions[selectedProps.SID - 1];
+            // refresh here
+          }} title="Check Out" />) : (<Button onPress={() => {
+            data.sessions[selectedProps.SID - 1].attendedUID.push(screenProps.profileProps.selectedUser.UID);
+            selectedProps = data.sessions[selectedProps.SID - 1];
+            // refresh here
+          }} title="Check In" />)) :
+        (<Button disabled title="Register"/>)
+      )}</View>
     </View>
   );
 }
-
-/*        <View>
-        {selectedProps.attendedUID.map((UID) => (
-          <Avatar.Text
-            size={48}
-            key={UID}
-            label={data.users[UID - 1].email.slice(0, 2).toUpperCase()}
-          />
-        ))}
-      </View>*/
