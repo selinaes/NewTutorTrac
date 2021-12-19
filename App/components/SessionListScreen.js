@@ -53,7 +53,7 @@ function SessionsList(props) {
                 : data.courses[session.courses[0]].number)
             }
             action={(session) => {
-              screenProps.selectedProps = session;
+              screenProps.selectedProps = session.SID;
               props.navigation.navigate("Session Details");
             }}
             data={session}

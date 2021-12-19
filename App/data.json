@@ -274,7 +274,7 @@
       "recurringDay": "R",
       "tutor": 24,
       "recurring": true,
-      "attendedUID": [13, 1, 3, 23, 26, 27],
+      "attendedUID": [13, 3, 23, 26, 27],
       "courses": [7],
       "location": "SCI-L045",
       "startTime": "2021-09-16T20:00:00",
