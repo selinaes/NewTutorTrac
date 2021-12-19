@@ -77,7 +77,7 @@ export default function DataDisplayScreen(props) {
         (selectedSession.attendedUID.includes(screenProps.profileProps.selectedUser.UID)?
           (<Button onPress={() => {
             let uidIndex = data.sessions[selectedSession.SID - 1].attendedUID.indexOf(screenProps.profileProps.selectedUser.UID);
-            data.sessions[selectedSession.SID - 1].attendedUID.splice(uidIndex, uidIndex);
+            data.sessions[selectedSession.SID - 1].attendedUID.splice(uidIndex, 1);
             setSelectedSession(data.sessions[selectedSession.SID - 1]);
           }} title="Check Out" />) : (<Button onPress={() => {
             data.sessions[selectedSession.SID - 1].attendedUID.push(screenProps.profileProps.selectedUser.UID);
