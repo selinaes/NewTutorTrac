@@ -13,7 +13,6 @@ import CourseItem from "./CourseItem.js";
 const data = require("../data.json");
 import TimeDisplay from "./TimeDisplay.js";
 
-//copied from simplified sessions card, need to modify
 export default function SessionCard(props) {
   const screenProps = useContext(StateContext);
   const selectedProps = screenProps.selectedProps;

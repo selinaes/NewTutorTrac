@@ -11,8 +11,6 @@ import { Appbar } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import SignedInDisplay from "./SignedInDisplay.js";
-
-import { initializeApp } from "firebase/app";
 import {
   // access to authentication features:
   getAuth,
@@ -23,35 +21,8 @@ import {
   // for logging out:
   signOut,
 } from "firebase/auth";
-import {
-  // access to Firestore storage features:
-  getFirestore,
-  // for storage access
-  collection,
-  doc,
-  addDoc,
-  setDoc,
-  query,
-  where,
-  getDocs,
-  writeBatch,
-} from "firebase/firestore";
+
 const data = require("../data.json");
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCtvvMpb2icR7di4hyGnD7Wg76hussiBYk",
-  authDomain: "cs317-tutortrac.firebaseapp.com",
-  projectId: "cs317-tutortrac",
-  storageBucket: "cs317-tutortrac.appspot.com",
-  messagingSenderId: "883004559565",
-  appId: "1:883004559565:web:765c9894d3dbcfc0b19984",
-  measurementId: "G-ZK9YEKDBDT",
-};
-
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp); // *** new for Firestore
 
 const selectSignedInUser = true;
 function emailOf(user) {
@@ -63,14 +34,15 @@ function emailOf(user) {
 }
 
 export default function SignInScreen(props) {
+  const [errorMsg, setErrorMsg] = React.useState("");
   const screenProps = useContext(StateContext);
   const signedInProps = screenProps.signedInProps;
+  const auth = screenProps.firebaseProps.auth;
+
   const email = signedInProps.email;
   const setEmail = signedInProps.setEmail;
   const password = signedInProps.password;
   const setPassword = signedInProps.setPassword;
-  const errorMsg = signedInProps.errorMsg;
-  const setErrorMsg = signedInProps.setErrorMsg;
   const loggedInUser = signedInProps.loggedInUser;
   const setLoggedInUser = signedInProps.setLoggedInUser;
 
@@ -93,65 +65,6 @@ export default function SignInScreen(props) {
       console.log(`on unmount: emailOf(loggedInUser)=${emailOf(loggedInUser)}`);
     };
   }, []);
-
-  /***************************************************************************
-     FIRESTORE CODE
-
-    ***************************************************************************/
-
-  // async function addCourseDoc() {
-  //   // Add a new document in collection "courses"
-  //   await setDoc(doc(db, "courses", "2"), {
-  //     department: "PSYC",
-  //     number: "101",
-  //   });
-  // }
-
-  // async function batchWriteOriginal() {
-  //   // Get a new write batch
-  //   const batch = writeBatch(db);
-
-  //   // Set the values for 'courses'
-  //   data.courses.forEach((course, index) => {
-  //     const courseRef = doc(db, "courses", index.toString());
-  //     batch.set(courseRef, {
-  //       department: course.department,
-  //       number: course.number,
-  //     });
-  //   });
-
-  //   // Set the values for 'users'
-  //   data.users.forEach((user) => {
-  //     const userRef = doc(db, "users", user.UID.toString());
-  //     batch.set(userRef, {
-  //       classyear: user.classyear,
-  //       email: user.email,
-  //       name: user.name,
-  //       courses: user.courses,
-  //     });
-  //   });
-
-  //   // Set the values for 'sessions'
-  //   data.sessions.forEach((session) => {
-  //     const sessionRef = doc(db, "sessions", session.SID.toString());
-  //     batch.set(sessionRef, {
-  //       attendedUID: session.attendedUID,
-  //       courses: session.courses,
-  //       department: session.department,
-  //       startTime: session.startTime,
-  //       endTime: session.endTime,
-  //       location: session.location,
-  //       maxCapacity: session.maxCapacity,
-  //       recurring: session.recurring,
-  //       recurringDay: session.recurringDay,
-  //       tutor: session.tutor,
-  //       type: session.type,
-  //     });
-  //   });
-
-  //   // Commit the batch
-  //   await batch.commit();
-  // }
 
   /***************************************************************************
      AUTHENTICATION CODE

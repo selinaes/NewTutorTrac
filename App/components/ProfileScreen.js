@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
 import {
   Headline,
@@ -7,61 +7,85 @@ import {
   Avatar,
   Appbar,
 } from "react-native-paper";
+import {
+  // access to Firestore storage features:
+  getFirestore,
+  // for storage access
+  collection,
+  doc,
+  addDoc,
+  setDoc,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
 const data = require("../data.json");
 
+function formatJSON(jsonVal) {
+  // Lyn sez: replacing \n by <br/> not necessary if use this CSS:
+  //   white-space: break-spaces; (or pre-wrap)
+  // let replacedNewlinesByBRs = prettyPrintedVal.replace(new RegExp('\n', 'g'), '<br/>')
+  return JSON.stringify(jsonVal, null, 2);
+}
+
+function docToSession(Doc) {
+  console.log("docToSession");
+  const data = Doc.data();
+  // console.log(Doc.id, " => ", data);
+  return { ...data };
+}
+
 export default function ProfileScreen(props) {
   const screenProps = useContext(StateContext);
   const profileProps = screenProps.profileProps;
+  const firebaseProps = screenProps.firebaseProps;
+  const db = firebaseProps.db;
+  const selectedUser = screenProps.profileProps.selectedUser;
+
+  const [attendedSessions, setAttendedSessions] = React.useState([]);
+
+  //on mount and unmount
+  useEffect(() => {
+    console.log("ProfileScreen did mount");
+    console.log(
+      `on mount: firebaseGetAttendedSessions('${selectedUser.name}')`
+    );
+    firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
+    return () => {
+      // Anything in here is fired on component unmount.
+      console.log("ChatViewScreen did unmount");
+      //   unsubscribe();
+    };
+  }, []);
 
   /***************************************************************************
    USERS FUNCTIONALITY CODE
    ***************************************************************************/
+  let unsubscribe;
+  async function firebaseGetAttendedSessions(UID) {
+    const q = query(
+      collection(db, "sessions"),
+      where("attendedUID", "array-contains-any", [UID])
+    );
+    const querySnapshot = await getDocs(q);
+    let attendedS = [];
+    // unsubscribe = onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      attendedS.push(docToSession(doc));
+    });
+    // });
+    setAttendedSessions(attendedS);
+    console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
+  }
 
   /***************************************************************************
      RENDERING PROFILE TAB
     ***************************************************************************/
-  //  const colors=['aqua', 'bisque', 'coral', 'crimson', 'fuchsia',
-  //  'gold',  'lime', 'orange', 'pink', 'plum', 'purple',
-  //  'salmon', 'teal', 'wheat'];
-
-  //  function colorSelect() {
-  //   const [pokemon,setPokemon] = useState();
-  //   const [selectedLanguage,setSelectedLanguage] = useState();
-  //   const [color,setColor] = useState('plum');
-
-  //   return (
-  //      <View style={[globalStyles.screen, {backgroundColor: color}]}>
-  //        <Picker
-  //           style={globalStyles.pickerglobalStyles}
-  //           mode='dropdown' // or 'dialog'; chooses mode on Android
-  //           selectedValue={color}
-  //           onValueChange={(itemValue, itemIndex) => setColor(itemValue)}>
-  //           {colors.map(clr => <Picker.Item key={clr} label={clr} value={clr}/>)}
-  //        </Picker>
-  //      </View>
-  //   );
-  // }
-
-  //  function testingUserSelection() {
-  //  return (
-  //   <View style={[globalStyles.screen]}>
-  //     <Picker
-  //        style={globalStyles.pickerglobalStyles}
-  //        mode='dropdown' // or 'dialog'; chooses mode on Android
-  //        selectedValue={selectedUser}
-  //        onValueChange={(itemValue, itemIndex) => setSelectedUser(itemValue)}>
-  //       <Picker.Item label="Pikachu" value="pikachu" />
-  //       <Picker.Item label="Charmander" value="charmander" />
-  //       <Picker.Item label="Squirtle" value="Squirtle" />
-  //        {/* {fakeUsers.map(user => <Picker.Item key={user.name} label={user.name} value={user.name}/>)} */}
-  //     </Picker>
-  //   </View>
-  //   );
-  // }
 
   function displayPersonalInfo() {
     return (
@@ -99,7 +123,7 @@ export default function ProfileScreen(props) {
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions
+          {/* {data.sessions
             .filter((session) =>
               session.attendedUID.includes(profileProps.selectedUser.UID)
             )
@@ -118,7 +142,23 @@ export default function ProfileScreen(props) {
                 }
                 content={session.startTime}
               ></SimplifiedSessionCard>
-            ))}
+            ))} */}
+          {attendedSessions.map((session) => (
+            <SimplifiedSessionCard
+              key={session.startTime}
+              subtitle={data.users[session.tutor].name}
+              title={
+                session.type +
+                ": " +
+                data.courses[session.courses[0]].department +
+                " " +
+                (session.type == "Cafe"
+                  ? ""
+                  : data.courses[session.courses[0]].number)
+              }
+              content={session.startTime}
+            ></SimplifiedSessionCard>
+          ))}
         </View>
 
         <Headline>Hosted Sessions</Headline>
