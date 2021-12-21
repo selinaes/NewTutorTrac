@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   SectionList,
   Array,
+  ScrollView,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 const data = require("../data.json");

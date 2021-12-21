@@ -24,6 +24,8 @@ import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
+import { firebaseGetSpecifiedUser } from "./Firestore";
+import Async from "react-async";
 const data = require("../data.json");
 
 function formatJSON(jsonVal) {
@@ -33,8 +35,8 @@ function formatJSON(jsonVal) {
   return JSON.stringify(jsonVal, null, 2);
 }
 
-function docToSession(Doc) {
-  console.log("docToSession");
+function docToObject(Doc) {
+  console.log("docToObject");
   const data = Doc.data();
   // console.log(Doc.id, " => ", data);
   return { ...data };
@@ -59,14 +61,12 @@ export default function ProfileScreen(props) {
     return () => {
       // Anything in here is fired on component unmount.
       console.log("ChatViewScreen did unmount");
-      //   unsubscribe();
     };
   }, []);
 
   /***************************************************************************
    USERS FUNCTIONALITY CODE
    ***************************************************************************/
-  let unsubscribe;
   async function firebaseGetAttendedSessions(UID) {
     const q = query(
       collection(db, "sessions"),
@@ -76,11 +76,11 @@ export default function ProfileScreen(props) {
     let attendedS = [];
     // unsubscribe = onSnapshot(q, (querySnapshot) => {
     querySnapshot.forEach((doc) => {
-      attendedS.push(docToSession(doc));
+      attendedS.push(doc.data());
     });
     // });
     setAttendedSessions(attendedS);
-    console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
+    // console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
   }
 
   /***************************************************************************
@@ -123,26 +123,6 @@ export default function ProfileScreen(props) {
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {/* {data.sessions
-            .filter((session) =>
-              session.attendedUID.includes(profileProps.selectedUser.UID)
-            )
-            .map((session, index) => (
-              <SimplifiedSessionCard
-                key={index}
-                subtitle={data.users[session.tutor].name}
-                title={
-                  session.type +
-                  ": " +
-                  data.courses[session.courses[0]].department +
-                  " " +
-                  (session.type == "Cafe"
-                    ? ""
-                    : data.courses[session.courses[0]].number)
-                }
-                content={session.startTime}
-              ></SimplifiedSessionCard>
-            ))} */}
           {attendedSessions.map((session, index) => (
             <SimplifiedSessionCard
               key={index}
