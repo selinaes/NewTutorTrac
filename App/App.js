@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, Text, LogBox } from "react-native";
 import { initializeApp } from "firebase/app";
@@ -18,11 +18,13 @@ import { Picker } from "@react-native-picker/picker";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import StateContext from "./components/StateContext.js";
 import { globalStyles } from "./styles/globalStyles.js";
 import SignInScreen from "./components/SignInScreen.js";
 import ProfileScreen from "./components/ProfileScreen.js";
 import SessionListScreen from "./components/SessionListScreen.js";
+import NewUserScreen from "./components/NewUserScreen.js";
 
 const data = require("./data.json");
 
@@ -42,7 +44,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp); // *** new for Firestore
-const storage = getStorage(firebaseApp, "cs317-tutortrac.appspot.com"); // for storaging images in Firebase storage
+const storage = getStorage(firebaseApp, "cs317-tutortrac.appspot.com"); // for storing images in Firebase storage
 
 LogBox.ignoreLogs([
   "Setting a timer",
@@ -56,12 +58,29 @@ function formatJSON(jsonVal) {
   return JSON.stringify(jsonVal, null, 2);
 }
 
-export default function App() {
+function HomeScreen(props) {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "coral" },
+        headerShown: false,
+      }}
+      initialRouteName="Sessions"
+    >
+      <Tab.Screen name="Sessions" component={SessionListScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+ 
+      </Tab.Navigator>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+export default function App(props) {
   /***************************************************************************
-   INITIALIZATION
+    TOP LEVEL RENDERING
    ***************************************************************************/
 
-  // Shared state for authentication
+    // Shared state for authentication
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loggedInUser, setLoggedInUser] = React.useState(null);
@@ -72,9 +91,14 @@ export default function App() {
   const [courses, setCourses] = React.useState([]);
 
   // State for users & profile
-  const [selectedUser, setSelectedUser] = React.useState(data.users[0]); // React.useState(loggedInUserProfile? loggedInUserProfile:data.users[0]); //for testing
+  const [selectedUser, setSelectedUser] = React.useState(loggedInUser? data.users.filter((user) => user.email === email)[0]:data.users[0]); //for testing
 
-  const signedInProps = {
+  const firebaseProps = { auth, db, storage };
+  const profileProps = { selectedUser, setSelectedUser };
+  const sessionsProps = { selectedUser, setSelectedUser };
+  const selectedProps = data.sessions[0];
+
+    const signedInProps = {
     email,
     setEmail,
     password,
@@ -95,35 +119,6 @@ export default function App() {
     setCourses,
   };
 
-  const firebaseProps = { auth, db, storage };
-  const profileProps = { selectedUser, setSelectedUser };
-  const sessionsProps = { selectedUser, setSelectedUser };
-  const selectedProps = data.sessions[0];
-
-  /***************************************************************************
-   RENDERING DEBUGGING INFO
-   ***************************************************************************/
-
-  function displayStates() {
-    return (
-      <ScrollView style={globalStyles.jsonContainer}>
-        <Text style={globalStyles.json}>
-          Selected User: {formatJSON(selectedUser)}
-        </Text>
-        <Text style={globalStyles.json}>
-          LoggedIn User: {formatJSON(loggedInUser)}
-        </Text>
-        <Text style={globalStyles.json}>
-          Courses: {formatJSON(data.courses.slice(1, 3))}
-        </Text>
-      </ScrollView>
-    );
-  }
-
-  /***************************************************************************
-   TOP LEVEL RENDERING
-   ***************************************************************************/
-
   const screenProps = {
     signedInProps,
     profileProps,
@@ -133,22 +128,41 @@ export default function App() {
     firestoreProps,
   };
 
+    /***************************************************************************
+    RENDERING DEBUGGING INFO
+   ***************************************************************************/
+    function displayStates() {
+      return (
+        <ScrollView style={globalStyles.jsonContainer}>
+          <Text style={globalStyles.json}>
+            Selected User: {formatJSON(selectedUser)}
+          </Text>
+          <Text style={globalStyles.json}>
+            LoggedIn User: {formatJSON(loggedInUser)}
+          </Text>
+          <Text style={globalStyles.json}>
+            Courses: {formatJSON(data.courses.slice(1, 3))}
+          </Text>
+        </ScrollView>
+      );
+    }
+  
+    /***************************************************************************
+    INITIALIZATION
+   ***************************************************************************/
   return (
     <StateContext.Provider value={screenProps}>
       <PaperProvider>
         <NavigationContainer>
           <StatusBar style="auto" />
-          <Tab.Navigator
-            screenOptions={{
-              headerStyle: { backgroundColor: "coral" },
-              headerShown: false,
-            }}
-            initialRouteName="Sessions"
+          <Stack.Navigator
+            initialRouteName="Log In"
+            screenOptions={{ headerStyle: { backgroundColor: "#f1c40f" }, headerShown: false }}
           >
-            <Tab.Screen name="Info" component={SignInScreen} />
-            <Tab.Screen name="Sessions" component={SessionListScreen} />
-            <Tab.Screen name="Profile" component={ProfileScreen} />
-          </Tab.Navigator>
+            <Stack.Screen name="Log In" component={SignInScreen} />
+            <Stack.Screen name="Setup" component={NewUserScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+          </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </StateContext.Provider>

@@ -13,8 +13,8 @@ export default function SignedInDisplay(props) {
       </Text>
       <Button title={"Sign Out"} onPress={props.signOutUser} />
       <Button
-        title="Go to Profile Screen"
-        onPress={() => props.navigation.navigate("Profile")}
+        title="Continue to app"
+        onPress={() => props.navigation.navigate("Setup")}
       />
     </View>
   );

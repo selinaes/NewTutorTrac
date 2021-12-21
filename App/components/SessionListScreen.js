@@ -14,6 +14,7 @@ const data = require("../data.json");
 
 function SessionsList(props) {
   const screenProps = useContext(StateContext);
+  console.log(screenProps)
   const sessionsProps = screenProps.sessionsProps;
 
   const today = 2; // new Date(now()).getDay

@@ -4,17 +4,18 @@ import { Chip } from "react-native-paper";
 
 //A single class chip component
 export default function CourseItem(props) {
-  return (
-    <Chip style={styles.chip}>{props.department + " " + props.number}</Chip>
-  );
-}
-
-const styles = StyleSheet.create({
-  chip: {
+    var styles = {
     flexDirection: "row",
     width: 120,
     margin: 3,
     textAlign: "center",
-    backgroundColor: "coral",
-  },
-});
+    backgroundColor: "coral"
+  }
+  if (props.color) {
+    styles.backgroundColor = props.color;
+  }
+
+  return (
+    <Chip style={styles}>{props.department + " " + props.number}</Chip>
+  );
+}

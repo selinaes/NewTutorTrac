@@ -145,7 +145,7 @@ export default function ProfileScreen(props) {
             ))} */}
           {attendedSessions.map((session) => (
             <SimplifiedSessionCard
-              key={session.startTime}
+              key={session.SID}
               subtitle={data.users[session.tutor].name}
               title={
                 session.type +
@@ -169,7 +169,7 @@ export default function ProfileScreen(props) {
             )
             .map((session, index) => (
               <SimplifiedSessionCard
-                key={index}
+                key={session.SID}
                 subtitle={data.users[session.tutor - 1].name}
                 title={
                   session.type +
