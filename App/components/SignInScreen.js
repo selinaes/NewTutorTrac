@@ -38,6 +38,8 @@ import {
 } from "firebase/firestore";
 const data = require("../data.json");
 
+import { UserDB, SessionDB, CourseDB } from "./FirebaseHelpers.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCtvvMpb2icR7di4hyGnD7Wg76hussiBYk",
   authDomain: "cs317-tutortrac.firebaseapp.com",
@@ -52,6 +54,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp); // *** new for Firestore
+const users = collection(db, 'users');
 
 const selectSignedInUser = true;
 function emailOf(user) {
@@ -95,9 +98,18 @@ export default function SignInScreen(props) {
   }, []);
 
   /***************************************************************************
-     FIRESTORE CODE
+    FIRESTORE CODE
 
     ***************************************************************************/
+
+  async function addUser(name, email, year, courses) {
+    await addDoc(users, {
+    name: name,
+    email: email,
+    classyear: 2023,
+    courses: []
+  });
+  };
 
   // async function addCourseDoc() {
   //   // Add a new document in collection "courses"
@@ -154,7 +166,7 @@ export default function SignInScreen(props) {
   // }
 
   /***************************************************************************
-     AUTHENTICATION CODE
+    AUTHENTICATION CODE
 
     ***************************************************************************/
 
@@ -193,6 +205,7 @@ export default function SignInScreen(props) {
         // Note: could store userCredential here if wanted it later ...
         // console.log(`createUserWithEmailAndPassword: setCredential`);
         // setCredential(userCredential);
+        UserDB.add({ name: "", email: email, classyear: 0, courses:[]});
 
         // Send verification email
         console.log(
@@ -247,7 +260,7 @@ export default function SignInScreen(props) {
             loggedInUser
           )}`
         );
-
+    
         // Only log in auth.currentUser if their email is verified
         checkEmailVerification();
 
@@ -311,7 +324,7 @@ export default function SignInScreen(props) {
   }
 
   /***************************************************************************
-   RENDERING AUTHENTICATION
+    RENDERING AUTHENTICATION
    ***************************************************************************/
 
   function loginPane() {

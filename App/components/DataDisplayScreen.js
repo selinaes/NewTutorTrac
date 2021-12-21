@@ -6,13 +6,21 @@ import StateContext from "./StateContext.js";
 import DetailedSessionCard from "./DetailedSessionCard.js";
 import CourseItem from "./CourseItem.js";
 import { globalStyles } from "../styles/globalStyles.js";
+import { SessionDB } from "./FirebaseHelpers.js";
 
 const testDate = true;
 
-export default function DataDisplayScreen(props) { 
+function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
+
+export default async function DataDisplayScreen(props) { 
   const screenProps = useContext(StateContext);
-  const [selectedSession, setSelectedSession] = useState(data.sessions[screenProps.selectedProps - 1]);
-  /*setSelectedSession(data.sessions[screenProps.selectedProps - 1]);*/
+  const sessionData = SessionDB.get(screenProps.selectedProps);
+  await timeout(1000);
+  const [selectedSession, setSelectedSession] = useState(sessionData);//data.sessions[screenProps.selectedProps - 1]);
+  //setSelectedSession(data.sessions[screenProps.selectedProps - 1]);
+  console.log(sessionData);
 
   const attendsCourseLog = [];
   const attendees = selectedSession.courses.map(course => ({
@@ -73,18 +81,6 @@ export default function DataDisplayScreen(props) {
           )}
         />
       </SafeAreaView>
-      <View>{((start.getDay() == now.getDay()) && (start.getHours() <= now.getHours() <= end.getHours()) ?
-        (selectedSession.attendedUID.includes(screenProps.profileProps.selectedUser.UID)?
-          (<Button onPress={() => {
-            let uidIndex = data.sessions[selectedSession.SID - 1].attendedUID.indexOf(screenProps.profileProps.selectedUser.UID);
-            data.sessions[selectedSession.SID - 1].attendedUID.splice(uidIndex, 1);
-            setSelectedSession(data.sessions[selectedSession.SID - 1]);
-          }} title="Check Out" />) : (<Button onPress={() => {
-            data.sessions[selectedSession.SID - 1].attendedUID.push(screenProps.profileProps.selectedUser.UID);
-            setSelectedSession(data.sessions[selectedSession.SID - 1]);
-          }} title="Check In" />)) :
-        (<Button disabled title="Register"/>)
-      )}</View>
     </View>
   );
 }
