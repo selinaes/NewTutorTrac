@@ -143,18 +143,19 @@ export default function ProfileScreen(props) {
                 content={session.startTime}
               ></SimplifiedSessionCard>
             ))} */}
-          {attendedSessions.map((session) => (
+          {attendedSessions.map((session, index) => (
             <SimplifiedSessionCard
-              key={session.SID}
+              key={index}
               subtitle={data.users[session.tutor].name}
               title={
                 session.type +
-                ": " +
-                data.courses[session.courses[0]].department +
-                " " +
-                (session.type == "Cafe"
-                  ? ""
-                  : data.courses[session.courses[0]].number)
+                  ": " +
+                  session.courses.length > 0?
+                  (data.courses[session.courses[0]].department +
+                  " " +
+                  (session.type == "Cafe"
+                    ? ""
+                    : data.courses[session.courses[0]].number)) :""
               }
               content={session.startTime}
             ></SimplifiedSessionCard>
@@ -169,16 +170,17 @@ export default function ProfileScreen(props) {
             )
             .map((session, index) => (
               <SimplifiedSessionCard
-                key={session.SID}
+                key={index}
                 subtitle={data.users[session.tutor - 1].name}
                 title={
                   session.type +
                   ": " +
-                  data.courses[session.courses[0]].department +
+                  session.courses.length > 0?
+                  (data.courses[session.courses[0]].department +
                   " " +
                   (session.type == "Cafe"
                     ? ""
-                    : data.courses[session.courses[0]].number)
+                    : data.courses[session.courses[0]].number)) :""
                 }
                 content={session.startTime}
               ></SimplifiedSessionCard>

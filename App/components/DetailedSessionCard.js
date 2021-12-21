@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, TouchableOpacity, Text, View, SectionList } from "react-native";
+import { StyleSheet, TouchableOpacity, Text, View, SectionList, Linking } from "react-native";
 import { Avatar } from "react-native-paper";
 import {
   Card,
@@ -17,7 +17,6 @@ import DurationDisplay from "./DurationDisplay.js";
 import DateDisplay from "./DateDisplay.js";
 import { ProgressBar, Colors } from 'react-native-paper';
 
-//copied from simplified sessions card, need to modify
 export default function DetailedSessionCard(props) {
   const screenProps = useContext(StateContext);
   const selectedProps = screenProps.selectedProps;

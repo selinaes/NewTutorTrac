@@ -92,11 +92,12 @@ export default function App(props) {
 
   // State for users & profile
   const [selectedUser, setSelectedUser] = React.useState(loggedInUser? data.users.filter((user) => user.email === email)[0]:data.users[0]); //for testing
+  const [selectedSession, setSelectedSession] = React.useState(null);
 
   const firebaseProps = { auth, db, storage };
   const profileProps = { selectedUser, setSelectedUser };
   const sessionsProps = { selectedUser, setSelectedUser };
-  const selectedProps = data.sessions[0];
+  const selectedProps = { selectedSession, setSelectedSession};
 
     const signedInProps = {
     email,

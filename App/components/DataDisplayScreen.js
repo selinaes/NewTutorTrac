@@ -18,12 +18,12 @@ import { globalStyles } from "../styles/globalStyles.js";
 const testDate = true;
 
 export default function DataDisplayScreen(props) {
+  const [dummy, setDummy] = React.useState(false);
   const screenProps = useContext(StateContext);
-  const [selectedSession, setSelectedSession] = useState(
-    data.sessions[screenProps.selectedProps - 1]
-  );
+  const selectedSession = screenProps.selectedProps.selectedSession;
+  const setSelectedSession = screenProps.selectedProps.setSelectedSession;
   /*setSelectedSession(data.sessions[screenProps.selectedProps - 1]);*/
-
+  console.log(selectedSession);
   const attendsCourseLog = [];
   const attendees = selectedSession.courses.map((course) => ({
     title: data.courses[course].department + " " + data.courses[course].number,
@@ -92,27 +92,21 @@ export default function DataDisplayScreen(props) {
             screenProps.profileProps.selectedUser.UID
           ) ? (
             <Button
-              onPress={() => {
-                let uidIndex = data.sessions[
-                  selectedSession.SID - 1
-                ].attendedUID.indexOf(
-                  screenProps.profileProps.selectedUser.UID
-                );
-                data.sessions[selectedSession.SID - 1].attendedUID.splice(
-                  uidIndex,
-                  1
-                );
-                setSelectedSession(data.sessions[selectedSession.SID - 1]);
+                  onPress={() => {
+                  let temp = selectedSession;
+                  temp.attendedUID.splice(temp.attendedUID.indexOf(screenProps.profileProps.selectedUser.UID), 1);
+                  setSelectedSession(temp);
+                    setDummy(!dummy);
               }}
               title="Check Out"
             />
           ) : (
             <Button
-              onPress={() => {
-                data.sessions[selectedSession.SID - 1].attendedUID.push(
-                  screenProps.profileProps.selectedUser.UID
-                );
-                setSelectedSession(data.sessions[selectedSession.SID - 1]);
+                  onPress={() => {
+                  let temp = selectedSession;
+                    temp.attendedUID.push(screenProps.profileProps.selectedUser.UID);
+                  setSelectedSession(temp);
+                  setDummy(!dummy);
               }}
               title="Check In"
             />

@@ -14,7 +14,7 @@ const data = require("../data.json");
 
 function SessionsList(props) {
   const screenProps = useContext(StateContext);
-  console.log(screenProps)
+  //(screenProps)
   const sessionsProps = screenProps.sessionsProps;
 
   const today = 2; // new Date(now()).getDay
@@ -54,7 +54,7 @@ function SessionsList(props) {
                 : data.courses[session.courses[0]].number)
             }
             action={(session) => {
-              screenProps.selectedProps = session.SID;
+              screenProps.selectedProps.setSelectedSession(session);
               props.navigation.navigate("Session Details");
             }}
             data={session}
