@@ -11,7 +11,6 @@ import { Appbar } from "react-native-paper";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import SignedInDisplay from "./SignedInDisplay.js";
-
 import {
   // access to authentication features:
   getAuth,
@@ -22,8 +21,6 @@ import {
   // for logging out:
   signOut,
 } from "firebase/auth";
-
-import NewUserScreen from "./NewUserScreen.js";
 
 const data = require("../data.json");
 
@@ -164,15 +161,14 @@ export default function SignInScreen(props) {
           )}`
         );
 
+        // Only log in auth.currentUser if their email is verified
+        checkEmailVerification();
+
         if (selectSignedInUser) {
           signedInProps.setSelectedUser(
             data.users.filter((user) => user.email === email)[0]
           );
         }
-
-        // Only log in auth.currentUser if their email is verified
-        checkEmailVerification();
-        props.navigation.navigate("Setup");
 
         // Clear email/password inputs
         //setEmail("");
@@ -228,7 +224,7 @@ export default function SignInScreen(props) {
   }
 
   /***************************************************************************
-    RENDERING AUTHENTICATION
+   RENDERING AUTHENTICATION
    ***************************************************************************/
 
   function loginPane() {
@@ -297,7 +293,6 @@ export default function SignInScreen(props) {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   signIn: {

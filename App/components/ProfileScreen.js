@@ -43,21 +43,22 @@ export default function ProfileScreen(props) {
   const selectedUser = screenProps.profileProps.selectedUser;
   const courses = screenProps.firestoreProps.courses;
   const setCourses = screenProps.firestoreProps.setCourses;
-  //   const users = screenProps.firestoreProps.users;
-  //   const setUsers = screenProps.firestoreProps.setUsers;
+  const users = screenProps.firestoreProps.users;
+  const setUsers = screenProps.firestoreProps.setUsers;
 
   const [attendedSessions, setAttendedSessions] = React.useState([]);
 
   //on mount and unmount
   useEffect(() => {
     console.log("ProfileScreen did mount");
+    firebaseGetCourses();
+    console.log(`on mount: courses('${formatJSON(courses)}')`);
     firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
     console.log(
       `on mount: firebaseGetAttendedSessions('${selectedUser.name}')`
     );
-    firebaseGetCourses();
-
-    console.log(`on mount: courses('${formatJSON(courses)}')`);
+    firebaseGetUsers();
+    console.log(`on mount: firebaseGetUsers('${users}')`);
     return () => {
       // Anything in here is fired on component unmount.
       console.log("ProfileScreen did unmount");
@@ -99,6 +100,19 @@ export default function ProfileScreen(props) {
     // });
     // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
     setCourses(courses);
+  }
+
+  async function firebaseGetUsers() {
+    const q = query(collection(db, "users"));
+    const querySnapshot = await getDocs(q);
+    let users = [];
+    // unsubscribe = onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      users.push(doc.data());
+    });
+    // });
+    // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
+    setUsers(users);
   }
 
   function signOutAndGoToSignIn() {
@@ -149,17 +163,17 @@ export default function ProfileScreen(props) {
           {attendedSessions.map((session, index) => (
             <SimplifiedSessionCard
               key={index}
-              subtitle={data.users[session.tutor].name}
+              subtitle={users[session.tutor].name}
               title={
-                session.type
-                // +": " +
-                // (session.courses.length > 0
-                //   ? courses[session.courses[0]].department +
-                //     " " +
-                //     (session.type === "Cafe"
-                //       ? ""
-                //       : courses[session.courses[0]].number)
-                //   : "")
+                session.type +
+                ": " +
+                (session.courses.length > 0
+                  ? courses[session.courses[0]].department +
+                    " " +
+                    (session.type === "Cafe"
+                      ? ""
+                      : courses[session.courses[0]].number)
+                  : "")
               }
               content={session.startTime}
             ></SimplifiedSessionCard>
