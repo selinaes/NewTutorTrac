@@ -27,6 +27,7 @@ import SignInScreen from "./components/SignInScreen.js";
 import ProfileScreen from "./components/ProfileScreen.js";
 import SessionListScreen from "./components/SessionListScreen.js";
 import NewUserScreen from "./components/NewUserScreen.js";
+import NewSessionScreen from "./components/NewSessionScreen";
 
 const data = require("./data.json");
 
@@ -94,12 +95,27 @@ export default function App(props) {
       ? data.users.filter((user) => user.email === email)[0]
       : data.users[0]
   ); //for testing
+
   const [selectedSession, setSelectedSession] = React.useState(null);
+  const resetSelectedSession = () => setSelectedSession({
+    "recurringDay": "",
+    "tutor": selectedUser.UID,
+    "recurring": true,
+    "attendedUID": [],
+    "courses": [],
+    "location": "",
+    "startTime": (new Date(Date.now())).toString(),
+    "SID": data.sessions.length,
+    "department": "",
+    "endTime": (new Date(Date.now()).setHours(Date.now.getHours() + 1)).toString(),
+    "type": "",
+    "maxCapacity": 0
+  });
 
   const firebaseProps = { auth, db, storage };
   const profileProps = { selectedUser, setSelectedUser, logOut };
   const sessionsProps = { selectedUser, setSelectedUser };
-  const selectedProps = { selectedSession, setSelectedSession };
+  const selectedProps = { selectedSession, setSelectedSession, resetSelectedSession };
 
   const signedInProps = {
     email,
@@ -180,6 +196,7 @@ export default function App(props) {
             <Stack.Screen name="Log In" component={SignInScreen} />
             <Stack.Screen name="Setup" component={NewUserScreen} />
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Modify Session" component={NewSessionScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

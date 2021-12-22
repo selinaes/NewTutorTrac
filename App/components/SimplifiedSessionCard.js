@@ -7,7 +7,7 @@ import TimeDisplay from "./TimeDisplay.js";
 export default function SimplifiedSessionCard(props) {
   return (
     <TouchableOpacity>
-      <Card style={styles.card}>
+      <Card style={styles.card} onPress={() => props.action()}>
         <Card.Content>
           <Subheading>{props.subtitle}</Subheading>
           <Title>{props.title}</Title>

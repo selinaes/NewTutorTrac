@@ -74,8 +74,9 @@ export default function NewUserScreen(props) {
           <TextInput
             placeholder="Enter class year"
             style={globalStyles.textInput}
-            value={classyear}
-            onChangeText={(textVal) => setYear(textVal)}
+          value={classyear}
+          keyboardType="number-pad"
+            onValueChange={(val) => setYear(val)}
           />
       </View>
       <Text style={globalStyles.inputLabel}>Current Courses</Text>

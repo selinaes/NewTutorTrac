@@ -164,11 +164,9 @@ export default function SignInScreen(props) {
         // Only log in auth.currentUser if their email is verified
         checkEmailVerification();
 
-        if (selectSignedInUser) {
-          signedInProps.setSelectedUser(
-            data.users.filter((user) => user.email === email)[0]
-          );
-        }
+        signedInProps.setSelectedUser(
+          data.users.filter((user) => user.email === email)[0]
+        );
 
         // Clear email/password inputs
         //setEmail("");

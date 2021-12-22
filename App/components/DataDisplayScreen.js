@@ -41,6 +41,14 @@ export default function DataDisplayScreen(props) {
     ),
   });
 
+    useEffect(() => {
+    //console.log(`on mount: courses('${formatJSON(courses)}')`);
+    return () => {
+      // Anything in here is fired on component unmount.
+      screenProps.selectedProps.resetSelectedSession();
+    };
+  }, []);
+
   const now = new Date(Date.now());
   const start = testDate ? now : new Date(selectedSession.startTime);
   const end = testDate ? now : new Date(selectedSession.endTime);
@@ -71,22 +79,7 @@ export default function DataDisplayScreen(props) {
           </View>
         }
       ></DetailedSessionCard>
-      <SafeAreaView>
-        <Text>Attendees</Text>
-        <SectionList
-          sections={attendees}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <Avatar.Text
-              size={48}
-              key={item}
-              label={data.users[item - 1].email.slice(0, 2).toUpperCase()}
-            />
-          )}
-          renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
-        />
-      </SafeAreaView>
-      <View>
+            <View>
         {start.getDay() == now.getDay() &&
         start.getHours() <= now.getHours() <= end.getHours() ? (
           selectedSession.attendedUID.includes(
@@ -116,6 +109,21 @@ export default function DataDisplayScreen(props) {
           <Button disabled title="Register" />
         )}
       </View>
+      <SafeAreaView>
+        <Text>Attendees</Text>
+        <SectionList
+          sections={attendees}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <Avatar.Text
+              size={48}
+              key={item}
+              label={data.users[item - 1].email.slice(0, 2).toUpperCase()}
+            />
+          )}
+          renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
+        />
+      </SafeAreaView>
     </View>
   );
 }

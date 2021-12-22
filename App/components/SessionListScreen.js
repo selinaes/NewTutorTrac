@@ -17,7 +17,7 @@ function SessionsList(props) {
   //(screenProps)
   const sessionsProps = screenProps.sessionsProps;
 
-  const today = 2; // new Date(now()).getDay
+  const today = new Date(Date.now()).getDay()
 
   /***************************************************************************
   SESSIONS FUNCTIONALITY CODE
@@ -32,7 +32,7 @@ function SessionsList(props) {
     .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
   const daySessions = weeklySchedule.map((x) =>
     sessionList.filter(
-      (session) => (new Date(session.startTime).getDay() - today + 7) % 7 == x
+      (session) => (new Date(session.startTime).getDay() - today + 1) % 7 == x
     )
   );
 

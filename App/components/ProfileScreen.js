@@ -40,6 +40,8 @@ export default function ProfileScreen(props) {
   const profileProps = screenProps.profileProps;
   const firebaseProps = screenProps.firebaseProps;
   const db = firebaseProps.db;
+  const selectedProps = screenProps.selectedProps;
+
   const selectedUser = screenProps.profileProps.selectedUser;
   const courses = screenProps.firestoreProps.courses;
   const setCourses = screenProps.firestoreProps.setCourses;
@@ -157,13 +159,14 @@ export default function ProfileScreen(props) {
             ></CourseItem>
           ))}
         </View>
+        <Button title="Edit Profile" onPress={() => props.navigation.navigate("Setup")} />
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
           {attendedSessions.map((session, index) => (
             <SimplifiedSessionCard
               key={index}
-              subtitle={users[session.tutor].name}
+              subtitle={data.users[session.tutor - 1].name}
               title={
                 session.type +
                 ": " +
@@ -181,6 +184,7 @@ export default function ProfileScreen(props) {
         </View>
 
         <Headline>Hosted Sessions</Headline>
+        <Button title="Add New" onPress={() => props.navigation.navigate("Modify Session")} />
         <View style={globalStyles.courseContainer}>
           {data.sessions
             .filter(
@@ -201,6 +205,11 @@ export default function ProfileScreen(props) {
                         : data.courses[session.courses[0]].number)
                     : "")
                 }
+                action={() => {
+                  selectedProps.setSelectedSession(session);
+                  //console.log(screenProps.selectedProps.selectedSession);
+                  props.navigation.navigate("Modify Session");
+                }}
                 content={session.startTime}
               ></SimplifiedSessionCard>
             ))}
