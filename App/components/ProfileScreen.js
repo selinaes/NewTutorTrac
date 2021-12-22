@@ -24,16 +24,9 @@ import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
-import { firebaseGetSpecifiedUser } from "./Firestore";
-import Async from "react-async";
+import { firebaseGetSpecifiedUser, firebaseGetCourses } from "./Firestore";
+import { formatJSON, emailOf } from "../utils";
 const data = require("../data.json");
-
-function formatJSON(jsonVal) {
-  // Lyn sez: replacing \n by <br/> not necessary if use this CSS:
-  //   white-space: break-spaces; (or pre-wrap)
-  // let replacedNewlinesByBRs = prettyPrintedVal.replace(new RegExp('\n', 'g'), '<br/>')
-  return JSON.stringify(jsonVal, null, 2);
-}
 
 function docToObject(Doc) {
   console.log("docToObject");
@@ -48,21 +41,33 @@ export default function ProfileScreen(props) {
   const firebaseProps = screenProps.firebaseProps;
   const db = firebaseProps.db;
   const selectedUser = screenProps.profileProps.selectedUser;
+  const courses = screenProps.firestoreProps.courses;
+  const setCourses = screenProps.firestoreProps.setCourses;
+  //   const users = screenProps.firestoreProps.users;
+  //   const setUsers = screenProps.firestoreProps.setUsers;
 
   const [attendedSessions, setAttendedSessions] = React.useState([]);
 
   //on mount and unmount
   useEffect(() => {
     console.log("ProfileScreen did mount");
+    firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
     console.log(
       `on mount: firebaseGetAttendedSessions('${selectedUser.name}')`
     );
-    firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
+    firebaseGetCourses();
+
+    console.log(`on mount: courses('${formatJSON(courses)}')`);
     return () => {
       // Anything in here is fired on component unmount.
-      console.log("ChatViewScreen did unmount");
+      console.log("ProfileScreen did unmount");
     };
   }, []);
+
+  useEffect(() => {
+    firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
+    console.log(`course change happened:courses('${formatJSON(courses)}')`);
+  }, [courses]);
 
   /***************************************************************************
    USERS FUNCTIONALITY CODE
@@ -81,6 +86,24 @@ export default function ProfileScreen(props) {
     // });
     setAttendedSessions(attendedS);
     // console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
+  }
+
+  async function firebaseGetCourses() {
+    const q = query(collection(db, "courses"));
+    const querySnapshot = await getDocs(q);
+    let courses = [];
+    // unsubscribe = onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      courses.push(doc.data());
+    });
+    // });
+    // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
+    setCourses(courses);
+  }
+
+  function signOutAndGoToSignIn() {
+    profileProps.logOut();
+    props.navigation.navigate("Log In");
   }
 
   /***************************************************************************
@@ -128,14 +151,15 @@ export default function ProfileScreen(props) {
               key={index}
               subtitle={data.users[session.tutor].name}
               title={
-                session.type +
-                  ": " +
-                  session.courses.length > 0?
-                  (data.courses[session.courses[0]].department +
-                  " " +
-                  (session.type == "Cafe"
-                    ? ""
-                    : data.courses[session.courses[0]].number)) :""
+                session.type
+                // +": " +
+                // (session.courses.length > 0
+                //   ? courses[session.courses[0]].department +
+                //     " " +
+                //     (session.type === "Cafe"
+                //       ? ""
+                //       : courses[session.courses[0]].number)
+                //   : "")
               }
               content={session.startTime}
             ></SimplifiedSessionCard>
@@ -155,17 +179,19 @@ export default function ProfileScreen(props) {
                 title={
                   session.type +
                   ": " +
-                  session.courses.length > 0?
-                  (data.courses[session.courses[0]].department +
-                  " " +
-                  (session.type == "Cafe"
-                    ? ""
-                    : data.courses[session.courses[0]].number)) :""
+                  (session.courses.length > 0
+                    ? data.courses[session.courses[0]].department +
+                      " " +
+                      (session.type == "Cafe"
+                        ? ""
+                        : data.courses[session.courses[0]].number)
+                    : "")
                 }
                 content={session.startTime}
               ></SimplifiedSessionCard>
             ))}
         </View>
+        <Button title="Sign Out" onPress={signOutAndGoToSignIn} />
       </ScrollView>
     </View>
   );

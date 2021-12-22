@@ -5,6 +5,7 @@ import { initializeApp } from "firebase/app";
 import {
   // access to authentication features:
   getAuth,
+  signOut,
 } from "firebase/auth";
 import {
   // access to Firestore features:
@@ -15,6 +16,7 @@ import {
   getStorage,
 } from "firebase/storage";
 import { Picker } from "@react-native-picker/picker";
+import { formatJSON, emailOf } from "./utils";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -51,13 +53,6 @@ LogBox.ignoreLogs([
   "AsyncStorage", // While we're at it, squelch AyncStorage, too!
 ]);
 
-function formatJSON(jsonVal) {
-  // Lyn sez: replacing \n by <br/> not necessary if use this CSS:
-  //   white-space: break-spaces; (or pre-wrap)
-  // let replacedNewlinesByBRs = prettyPrintedVal.replace(new RegExp('\n', 'g'), '<br/>')
-  return JSON.stringify(jsonVal, null, 2);
-}
-
 function HomeScreen(props) {
   return (
     <Tab.Navigator
@@ -68,9 +63,12 @@ function HomeScreen(props) {
       initialRouteName="Sessions"
     >
       <Tab.Screen name="Sessions" component={SessionListScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
- 
-      </Tab.Navigator>
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        navigation={props.navigation}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -80,7 +78,7 @@ export default function App(props) {
     TOP LEVEL RENDERING
    ***************************************************************************/
 
-    // Shared state for authentication
+  // Shared state for authentication
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loggedInUser, setLoggedInUser] = React.useState(null);
@@ -91,15 +89,19 @@ export default function App(props) {
   const [courses, setCourses] = React.useState([]);
 
   // State for users & profile
-  const [selectedUser, setSelectedUser] = React.useState(loggedInUser? data.users.filter((user) => user.email === email)[0]:data.users[0]); //for testing
+  const [selectedUser, setSelectedUser] = React.useState(
+    loggedInUser
+      ? data.users.filter((user) => user.email === email)[0]
+      : data.users[0]
+  ); //for testing
   const [selectedSession, setSelectedSession] = React.useState(null);
 
   const firebaseProps = { auth, db, storage };
-  const profileProps = { selectedUser, setSelectedUser };
+  const profileProps = { selectedUser, setSelectedUser, logOut };
   const sessionsProps = { selectedUser, setSelectedUser };
-  const selectedProps = { selectedSession, setSelectedSession};
+  const selectedProps = { selectedSession, setSelectedSession };
 
-    const signedInProps = {
+  const signedInProps = {
     email,
     setEmail,
     password,
@@ -129,26 +131,38 @@ export default function App(props) {
     firestoreProps,
   };
 
-    /***************************************************************************
+  function logOut() {
+    console.log("logOut");
+    console.log(
+      `logOut: emailOf(auth.currentUser)=${emailOf(auth.currentUser)}`
+    );
+    console.log(`logOut: emailOf(loggedInUser)=${emailOf(loggedInUser)}`);
+    console.log(`logOut: setLoggedInUser(null)`);
+    setLoggedInUser(null);
+    console.log("logOut: signOut(auth)");
+    signOut(auth); // Will eventually set auth.currentUser to null
+  }
+
+  /***************************************************************************
     RENDERING DEBUGGING INFO
    ***************************************************************************/
-    function displayStates() {
-      return (
-        <ScrollView style={globalStyles.jsonContainer}>
-          <Text style={globalStyles.json}>
-            Selected User: {formatJSON(selectedUser)}
-          </Text>
-          <Text style={globalStyles.json}>
-            LoggedIn User: {formatJSON(loggedInUser)}
-          </Text>
-          <Text style={globalStyles.json}>
-            Courses: {formatJSON(data.courses.slice(1, 3))}
-          </Text>
-        </ScrollView>
-      );
-    }
-  
-    /***************************************************************************
+  function displayStates() {
+    return (
+      <ScrollView style={globalStyles.jsonContainer}>
+        <Text style={globalStyles.json}>
+          Selected User: {formatJSON(selectedUser)}
+        </Text>
+        <Text style={globalStyles.json}>
+          LoggedIn User: {formatJSON(loggedInUser)}
+        </Text>
+        <Text style={globalStyles.json}>
+          Courses: {formatJSON(data.courses.slice(1, 3))}
+        </Text>
+      </ScrollView>
+    );
+  }
+
+  /***************************************************************************
     INITIALIZATION
    ***************************************************************************/
   return (
@@ -158,7 +172,10 @@ export default function App(props) {
           <StatusBar style="auto" />
           <Stack.Navigator
             initialRouteName="Log In"
-            screenOptions={{ headerStyle: { backgroundColor: "#f1c40f" }, headerShown: false }}
+            screenOptions={{
+              headerStyle: { backgroundColor: "#f1c40f" },
+              headerShown: false,
+            }}
           >
             <Stack.Screen name="Log In" component={SignInScreen} />
             <Stack.Screen name="Setup" component={NewUserScreen} />

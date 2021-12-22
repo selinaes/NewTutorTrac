@@ -8,18 +8,52 @@ import {
   Appbar,
   Checkbox,
 } from "react-native-paper";
+import {
+  // for storage access
+  collection,
+  query,
+  getDocs,
+} from "firebase/firestore";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
+import { formatJSON, emailOf } from "../utils";
 const data = require("../data.json");
 
 export default function NewUserScreen(props) {
   const screenProps = useContext(StateContext);
   const user = screenProps.signedInProps.selectedUser;
+  const db = screenProps.firebaseProps.db;
+  const courses = screenProps.firestoreProps.courses;
+  const setCourses = screenProps.firestoreProps.setCourses;
 
   const [checked, setChecked] = React.useState(user.courses);
   const [name, setName] = React.useState(user.name);
   const [classyear, setYear] = React.useState(user.classyear.toString());
+
+  //on mount and unmount
+  useEffect(() => {
+    console.log("NewUserScreen did mount");
+    firebaseGetCourses();
+    console.log(`on mount: courses('${formatJSON(courses)}')`);
+    return () => {
+      // Anything in here is fired on component unmount.
+      console.log("NewUserScreen did unmount");
+    };
+  }, []);
+
+  async function firebaseGetCourses() {
+    const q = query(collection(db, "courses"));
+    const querySnapshot = await getDocs(q);
+    let courses = [];
+    // unsubscribe = onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      courses.push(doc.data());
+    });
+    // });
+    // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
+    setCourses(courses);
+  }
   
   return (
     <View style={globalStyles.screen}>
@@ -47,7 +81,7 @@ export default function NewUserScreen(props) {
       <Text style={globalStyles.inputLabel}>Current Courses</Text>
       <ScrollView style={globalStyles.scrollView}>
           <View style={globalStyles.courseContainer}>
-          {data.courses.map((course, index) => (
+          {courses.map((course, index) => (
             <TouchableOpacity key={index} onPress={() => {
               checked.includes(index) ?
                 setChecked(checked.filter(course => course!= index)):
