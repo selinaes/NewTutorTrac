@@ -20,6 +20,7 @@ import { formatJSON, emailOf } from "./utils";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import StateContext from "./components/StateContext.js";
 import { globalStyles } from "./styles/globalStyles.js";
@@ -57,10 +58,25 @@ LogBox.ignoreLogs([
 function HomeScreen(props) {
   return (
     <Tab.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: "coral" },
-        headerShown: false,
-      }}
+      screenOptions=
+      {({ route }) => ({
+          headerStyle: { backgroundColor: "coral" },
+          headerShown: false,
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Sessions') {
+              iconName = focused
+                ? 'calendar'
+                : 'calendar-outline';
+            } else if (route.name === 'Profile') {
+              iconName = focused ? 'person' : 'person-outline';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          }
+        })}
       initialRouteName="Sessions"
     >
       <Tab.Screen name="Sessions" component={SessionListScreen} />

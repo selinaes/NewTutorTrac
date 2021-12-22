@@ -82,7 +82,7 @@ export default function SignInScreen(props) {
       signOut(auth); // sign out auth's current user (who is not loggedInUser,
       // or else we wouldn't be here
     }
-    if (!email.includes("@")) {
+    if (!email.includes("@wellesley.edu")) {
       setErrorMsg("Not a valid email address");
       return;
     }
