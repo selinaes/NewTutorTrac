@@ -49,16 +49,15 @@ export default function SignInScreen(props) {
   // component mount and unmount
   useEffect(() => {
     // Anything in here is fired on component mount.
-    console.log("Component did mount");
+    console.log("SignInScreen did mount");
     console.log(
       `on mount: emailOf(auth.currentUser)=${emailOf(auth.currentUser)}`
     );
     console.log(`on mount: emailOf(loggedInUser)=${emailOf(loggedInUser)}`);
     checkEmailVerification();
-    // batchWriteOriginal();
     return () => {
       // Anything in here is fired on component unmount.
-      console.log("Component did unmount");
+      console.log("SignInScreen did unmount");
       console.log(
         `on unmount: emailOf(auth.currentUser)=${emailOf(auth.currentUser)}`
       );

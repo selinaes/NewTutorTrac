@@ -25,15 +25,8 @@ import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
 import { firebaseGetSpecifiedUser, firebaseGetCourses } from "./Firestore";
-import { formatJSON, emailOf } from "../utils";
+import { formatJSON, emailOf, logVal } from "../utils";
 const data = require("../data.json");
-
-function docToObject(Doc) {
-  console.log("docToObject");
-  const data = Doc.data();
-  // console.log(Doc.id, " => ", data);
-  return { ...data };
-}
 
 export default function ProfileScreen(props) {
   const screenProps = useContext(StateContext);
@@ -53,24 +46,15 @@ export default function ProfileScreen(props) {
   //on mount and unmount
   useEffect(() => {
     console.log("ProfileScreen did mount");
-    firebaseGetCourses();
-    console.log(`on mount: courses('${formatJSON(courses)}')`);
-    firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
-    console.log(
-      `on mount: firebaseGetAttendedSessions('${selectedUser.name}')`
-    );
-    firebaseGetUsers();
-    console.log(`on mount: firebaseGetUsers('${users}')`);
+    // firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
+    // console.log(
+    //   `on mount: firebaseGetAttendedSessions('${selectedUser.name}')`
+    // );
     return () => {
       // Anything in here is fired on component unmount.
       console.log("ProfileScreen did unmount");
     };
   }, []);
-
-  useEffect(() => {
-    firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
-    console.log(`course change happened:courses('${formatJSON(courses)}')`);
-  }, [courses]);
 
   /***************************************************************************
    USERS FUNCTIONALITY CODE
@@ -89,32 +73,6 @@ export default function ProfileScreen(props) {
     // });
     setAttendedSessions(attendedS);
     // console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
-  }
-
-  async function firebaseGetCourses() {
-    const q = query(collection(db, "courses"));
-    const querySnapshot = await getDocs(q);
-    let courses = [];
-    // unsubscribe = onSnapshot(q, (querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      courses.push(doc.data());
-    });
-    // });
-    // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
-    setCourses(courses);
-  }
-
-  async function firebaseGetUsers() {
-    const q = query(collection(db, "users"));
-    const querySnapshot = await getDocs(q);
-    let users = [];
-    // unsubscribe = onSnapshot(q, (querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      users.push(doc.data());
-    });
-    // });
-    // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
-    setUsers(users);
   }
 
   function signOutAndGoToSignIn() {
@@ -159,11 +117,14 @@ export default function ProfileScreen(props) {
             ></CourseItem>
           ))}
         </View>
-        <Button title="Edit Profile" onPress={() => props.navigation.navigate("Setup")} />
+        <Button
+          title="Edit Profile"
+          onPress={() => props.navigation.navigate("Setup")}
+        />
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {attendedSessions.map((session, index) => (
+          {data.sessions.map((session, index) => (
             <SimplifiedSessionCard
               key={index}
               subtitle={data.users[session.tutor - 1].name}
@@ -171,11 +132,11 @@ export default function ProfileScreen(props) {
                 session.type +
                 ": " +
                 (session.courses.length > 0
-                  ? courses[session.courses[0]].department +
+                  ? data.courses[session.courses[0]].department +
                     " " +
                     (session.type === "Cafe"
                       ? ""
-                      : courses[session.courses[0]].number)
+                      : data.courses[session.courses[0]].number)
                   : "")
               }
               content={session.startTime}
@@ -184,7 +145,10 @@ export default function ProfileScreen(props) {
         </View>
 
         <Headline>Hosted Sessions</Headline>
-        <Button title="Add New" onPress={() => props.navigation.navigate("Modify Session")} />
+        <Button
+          title="Add New"
+          onPress={() => props.navigation.navigate("Modify Session")}
+        />
         <View style={globalStyles.courseContainer}>
           {data.sessions
             .filter(
@@ -198,7 +162,12 @@ export default function ProfileScreen(props) {
                   session.type +
                   ": " +
                   (session.courses.length > 0
-                    ? data.courses[session.courses[0]].department +
+                    ? logVal(
+                        "data.courses",
+                        data.courses[
+                          logVal("session.courses", session.courses[0])
+                        ]
+                      ).department +
                       " " +
                       (session.type == "Cafe"
                         ? ""
