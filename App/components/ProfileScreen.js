@@ -45,6 +45,7 @@ export default function ProfileScreen(props) {
 
   const [attendedSessions, setAttendedSessions] = React.useState([]);
   const [hostedSessions, setHosted] = React.useState([]);
+  const [tutoredCourses, setTutored] = React.useState([]);
 
   //on mount and unmount
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function ProfileScreen(props) {
   useEffect(() => {
     console.log("filter hosted sessions");
     filterHostedSessions();
+    filterTutoredCourses();
   }, [sessions]);
 
   /***************************************************************************
@@ -90,6 +92,18 @@ export default function ProfileScreen(props) {
       ([key, session]) => session.tutor === profileProps.selectedUser.UID
     );
     setHosted(hosted);
+  }
+
+  function filterTutoredCourses() {
+    let hosted = Object.entries(sessions).filter(
+      ([key, session]) => session.tutor === profileProps.selectedUser.UID
+    );
+    let tutored = [];
+    logVal("hosted", hosted).forEach(
+      ([key, session]) =>
+        (tutored = tutored.concat(logVal("session.courses", session.courses)))
+    );
+    setTutored(logVal("tutored", tutored));
   }
 
   /***************************************************************************
@@ -161,6 +175,25 @@ export default function ProfileScreen(props) {
                 ></SimplifiedSessionCard>
               );
             })}
+        </View>
+
+        <Headline
+          style={
+            hostedSessions.length > 0
+              ? globalStyles.visible
+              : globalStyles.hidden
+          }
+        >
+          Courses Tutoring For
+        </Headline>
+        <View style={globalStyles.courseContainer}>
+          {tutoredCourses.map((id) => (
+            <CourseItem
+              key={id}
+              department={courses[id].department}
+              number={courses[id].number}
+            ></CourseItem>
+          ))}
         </View>
 
         <Headline
