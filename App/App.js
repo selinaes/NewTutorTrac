@@ -118,22 +118,25 @@ export default function App(props) {
 
   const [selectedSession, setSelectedSession] = React.useState(null);
   const resetSelectedSession = () =>
-    setSelectedSession({
-      recurringDay: "",
-      tutor: selectedUser.UID,
-      recurring: true,
-      attendedUID: [],
-      courses: [],
-      location: "",
-      startTime: new Date(Date.now()).toString(),
-      SID: data.sessions.length,
-      department: "",
-      endTime: new Date(Date.now())
-        .setHours(Date.now.getHours() + 1)
-        .toString(),
-      type: "",
-      maxCapacity: 0,
-    });
+    setSelectedSession([
+      "0",
+      {
+        recurringDay: "",
+        tutor: selectedUser.UID,
+        recurring: true,
+        attendedUID: [],
+        courses: [],
+        location: "",
+        startTime: new Date(Date.now()).toString(),
+        SID: data.sessions.length,
+        department: "",
+        endTime: new Date(Date.now())
+          .setHours(Date.now.getHours() + 1)
+          .toString(),
+        type: "",
+        maxCapacity: 0,
+      },
+    ]);
 
   const firebaseProps = { auth, db, storage };
   const profileProps = { selectedUser, setSelectedUser, logOut };

@@ -66,10 +66,10 @@ function SessionsList(props) {
                       : courses[session.courses[0]].number)
                   : "")
               }
-              //   action={(session) => {
-              //     screenProps.selectedProps.setSelectedSession(session);
-              //     props.navigation.navigate("Session Details");
-              //   }}
+              action={(session) => {
+                screenProps.selectedProps.setSelectedSession([key, session]);
+                props.navigation.navigate("Session Details");
+              }}
               data={session}
               content={
                 <View style={globalStyles.courseContainer}>

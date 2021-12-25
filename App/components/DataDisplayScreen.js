@@ -14,6 +14,7 @@ const data = require("../data.json");
 import StateContext from "./StateContext.js";
 import DetailedSessionCard from "./DetailedSessionCard.js";
 import CourseItem from "./CourseItem.js";
+import { formatJSON, emailOf, logVal } from "../utils";
 import { globalStyles } from "../styles/globalStyles.js";
 
 const testDate = true;
@@ -24,25 +25,33 @@ export default function DataDisplayScreen(props) {
   const selectedSession = screenProps.selectedProps.selectedSession;
   const setSelectedSession = screenProps.selectedProps.setSelectedSession;
   /*setSelectedSession(data.sessions[screenProps.selectedProps - 1]);*/
-  console.log(selectedSession);
-  const attendsCourseLog = [];
-  const attendees = selectedSession.courses.map((course) => ({
-    title: data.courses[course].department + " " + data.courses[course].number,
-    data: selectedSession.attendedUID.filter((user) => {
-      const attendsCourse = data.users[user - 1].courses.includes(course);
-      if (attendsCourse) attendsCourseLog.push(user);
+
+  const courses = screenProps.firestoreProps.courses;
+  const setCourses = screenProps.firestoreProps.setCourses;
+  const users = screenProps.firestoreProps.users;
+  const setUsers = screenProps.firestoreProps.setUsers;
+  const sessions = screenProps.firestoreProps.sessions;
+  const setSessions = screenProps.firestoreProps.setSessions;
+
+  const attendsCourseLog = []; //all user attended who are registered for this class
+  const attendees = selectedSession[1].courses.map((course) => ({
+    title: courses[course].department + " " + courses[course].number, //the course they belong to
+    data: selectedSession[1].attendedUID.filter((user) => {
+      const attendsCourse = users[user].courses.includes(course); //a boolean, whether the attendedUID person take this course or not
+      if (logVal("attendsCourse", attendsCourse)) attendsCourseLog.push(user);
       return attendsCourse;
     }),
   }));
   attendees.push({
     title: "OTHER",
-    data: selectedSession.attendedUID.filter(
-      (user) => !attendsCourseLog.includes(user)
+    data: selectedSession[1].attendedUID.filter(
+      (user) => !attendsCourseLog.includes(user) //people not in this class but attend anyway (due to fake data)
     ),
   });
 
-    useEffect(() => {
+  useEffect(() => {
     //console.log(`on mount: courses('${formatJSON(courses)}')`);
+    console.log(selectedSession);
     return () => {
       // Anything in here is fired on component unmount.
       screenProps.selectedProps.resetSelectedSession();
@@ -50,63 +59,70 @@ export default function DataDisplayScreen(props) {
   }, []);
 
   const now = new Date(Date.now());
-  const start = testDate ? now : new Date(selectedSession.startTime);
-  const end = testDate ? now : new Date(selectedSession.endTime);
+  const start = testDate ? now : new Date(selectedSession[1].startTime);
+  const end = testDate ? now : new Date(selectedSession[1].endTime);
 
   return (
     <View style={globalStyles.screen}>
       <DetailedSessionCard
-        subtitle={data.users[selectedSession.tutor - 1].name}
+        subtitle={users[selectedSession[1].tutor].name}
         title={
-          selectedSession.type +
+          selectedSession[1].type +
           ": " +
-          data.courses[selectedSession.courses[0]].department +
+          courses[selectedSession[1].courses[0]].department +
           " " +
-          (selectedSession.type == "Cafe"
+          (selectedSession[1].type == "Cafe"
             ? ""
-            : data.courses[selectedSession.courses[0]].number)
+            : courses[selectedSession[1].courses[0]].number)
         }
-        data={selectedSession}
+        data={selectedSession[1]}
         content={
           <View style={globalStyles.courseContainer}>
-            {selectedSession.courses.map((id) => (
+            {selectedSession[1].courses.map((id) => (
               <CourseItem
                 key={id}
-                department={data.courses[id].department}
-                number={data.courses[id].number}
+                department={courses[id].department}
+                number={courses[id].number}
               ></CourseItem>
             ))}
           </View>
         }
       ></DetailedSessionCard>
-            <View>
+      <View>
         {start.getDay() == now.getDay() &&
-        start.getHours() <= now.getHours() <= end.getHours() ? (
-          selectedSession.attendedUID.includes(
-            screenProps.profileProps.selectedUser.UID
+        start.getHours() <= now.getHours() <= end.getHours() ? ( //checking whether today's weekday is the same as session start day, and now is between start & end's hours
+          selectedSession[1].attendedUID.includes(
+            screenProps.profileProps.selectedUser.UID //checking whether attendedUID include current user. if so check-out, otherwise check-in
           ) ? (
             <Button
-                  onPress={() => {
-                  let temp = selectedSession;
-                  temp.attendedUID.splice(temp.attendedUID.indexOf(screenProps.profileProps.selectedUser.UID), 1);
-                  setSelectedSession(temp);
-                    setDummy(!dummy);
+              onPress={() => {
+                let temp = selectedSession;
+                temp[1].attendedUID.splice(
+                  temp[1].attendedUID.indexOf(
+                    screenProps.profileProps.selectedUser.UID
+                  ),
+                  1
+                ); //splice(start, deleteCount)
+                setSelectedSession(temp);
+                setDummy(!dummy);
               }}
               title="Check Out"
             />
           ) : (
             <Button
-                  onPress={() => {
-                  let temp = selectedSession;
-                    temp.attendedUID.push(screenProps.profileProps.selectedUser.UID);
-                  setSelectedSession(temp);
-                  setDummy(!dummy);
+              onPress={() => {
+                let temp = selectedSession;
+                temp[1].attendedUID.push(
+                  screenProps.profileProps.selectedUser.UID
+                );
+                setSelectedSession(temp);
+                setDummy(!dummy);
               }}
               title="Check In"
             />
           )
         ) : (
-          <Button disabled title="Register" />
+          <Button disabled title="Register" /> //if not today's session, can only register? but this is disabled because unimplemented
         )}
       </View>
       <SafeAreaView>
@@ -118,7 +134,7 @@ export default function DataDisplayScreen(props) {
             <Avatar.Text
               size={48}
               key={item}
-              label={data.users[item - 1].email.slice(0, 2).toUpperCase()}
+              label={users[item].email.slice(0, 2).toUpperCase()}
             />
           )}
           renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
