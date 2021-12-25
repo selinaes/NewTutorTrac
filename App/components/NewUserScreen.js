@@ -33,7 +33,6 @@ export default function NewUserScreen(props) {
   const user = screenProps.signedInProps.selectedUser;
   const db = screenProps.firebaseProps.db;
   const courses = screenProps.firestoreProps.courses;
-  const setCourses = screenProps.firestoreProps.setCourses;
 
   const [checked, setChecked] = React.useState(user.courses);
   const [name, setName] = React.useState(user.name);
@@ -42,7 +41,7 @@ export default function NewUserScreen(props) {
   //on mount and unmount
   useEffect(() => {
     console.log("NewUserScreen did mount");
-    firebaseGetCourses();
+    // firebaseGetCourses();
     // console.log(`on mount: courses('${formatJSON(courses)}')`);
     return () => {
       // Anything in here is fired on component unmount.

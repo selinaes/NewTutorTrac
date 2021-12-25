@@ -40,6 +40,8 @@ export default function ProfileScreen(props) {
   const setCourses = screenProps.firestoreProps.setCourses;
   const users = screenProps.firestoreProps.users;
   const setUsers = screenProps.firestoreProps.setUsers;
+  const sessions = screenProps.firestoreProps.sessions;
+  const setSessions = screenProps.firestoreProps.setSessions;
 
   const [attendedSessions, setAttendedSessions] = React.useState([]);
 
@@ -112,8 +114,8 @@ export default function ProfileScreen(props) {
           {profileProps.selectedUser.courses.map((id) => (
             <CourseItem
               key={id}
-              department={data.courses[id].department}
-              number={data.courses[id].number}
+              department={courses[id].department}
+              number={courses[id].number}
             ></CourseItem>
           ))}
         </View>
@@ -124,24 +126,31 @@ export default function ProfileScreen(props) {
 
         <Headline>Attended Sessions</Headline>
         <View style={globalStyles.courseContainer}>
-          {data.sessions.map((session, index) => (
-            <SimplifiedSessionCard
-              key={index}
-              subtitle={data.users[session.tutor - 1].name}
-              title={
-                session.type +
-                ": " +
-                (session.courses.length > 0
-                  ? data.courses[session.courses[0]].department +
-                    " " +
-                    (session.type === "Cafe"
-                      ? ""
-                      : data.courses[session.courses[0]].number)
-                  : "")
-              }
-              content={session.startTime}
-            ></SimplifiedSessionCard>
-          ))}
+          {Object.entries(sessions)
+            .filter(([key, session]) =>
+              session.attendedUID.includes(profileProps.selectedUser.UID)
+            )
+            .map(([key, session]) => {
+              let index = parseInt(key);
+              return (
+                <SimplifiedSessionCard
+                  key={index}
+                  subtitle={users[session.tutor].name}
+                  title={
+                    session.type +
+                    ": " +
+                    (session.courses.length > 0
+                      ? courses[session.courses[0]].department +
+                        " " +
+                        (session.type === "Cafe"
+                          ? ""
+                          : courses[session.courses[0]].number)
+                      : "")
+                  }
+                  content={session.startTime}
+                ></SimplifiedSessionCard>
+              );
+            })}
         </View>
 
         <Headline>Hosted Sessions</Headline>
@@ -150,38 +159,37 @@ export default function ProfileScreen(props) {
           onPress={() => props.navigation.navigate("Modify Session")}
         />
         <View style={globalStyles.courseContainer}>
-          {data.sessions
+          {Object.entries(sessions)
             .filter(
-              (session) => session.tutor === profileProps.selectedUser.UID
+              ([key, session]) =>
+                session.tutor === profileProps.selectedUser.UID
             )
-            .map((session, index) => (
-              <SimplifiedSessionCard
-                key={index}
-                subtitle={data.users[session.tutor - 1].name}
-                title={
-                  session.type +
-                  ": " +
-                  (session.courses.length > 0
-                    ? logVal(
-                        "data.courses",
-                        data.courses[
-                          logVal("session.courses", session.courses[0])
-                        ]
-                      ).department +
-                      " " +
-                      (session.type == "Cafe"
-                        ? ""
-                        : data.courses[session.courses[0]].number)
-                    : "")
-                }
-                action={() => {
-                  selectedProps.setSelectedSession(session);
-                  //console.log(screenProps.selectedProps.selectedSession);
-                  props.navigation.navigate("Modify Session");
-                }}
-                content={session.startTime}
-              ></SimplifiedSessionCard>
-            ))}
+            .map(([key, session]) => {
+              let index = parseInt(key);
+              return (
+                <SimplifiedSessionCard
+                  key={index}
+                  subtitle={users[session.tutor].name}
+                  title={
+                    session.type +
+                    ": " +
+                    (session.courses.length > 0
+                      ? courses[session.courses[0]].department +
+                        " " +
+                        (session.type == "Cafe"
+                          ? ""
+                          : courses[session.courses[0]].number)
+                      : "")
+                  }
+                  action={() => {
+                    selectedProps.setSelectedSession(session);
+                    //console.log(screenProps.selectedProps.selectedSession);
+                    props.navigation.navigate("Modify Session");
+                  }}
+                  content={session.startTime}
+                ></SimplifiedSessionCard>
+              );
+            })}
         </View>
         <Button title="Sign Out" onPress={signOutAndGoToSignIn} />
       </ScrollView>
