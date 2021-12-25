@@ -10,6 +10,7 @@ import StateContext from "./StateContext.js";
 import SessionCard from "./SessionCard.js";
 import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
 import CourseItem from "./CourseItem.js";
+import { formatJSON, emailOf, logVal } from "../utils";
 const data = require("../data.json");
 
 function SessionsList(props) {
@@ -17,22 +18,30 @@ function SessionsList(props) {
   //(screenProps)
   const sessionsProps = screenProps.sessionsProps;
 
-  const today = new Date(Date.now()).getDay()
+  const courses = screenProps.firestoreProps.courses;
+  const setCourses = screenProps.firestoreProps.setCourses;
+  const users = screenProps.firestoreProps.users;
+  const setUsers = screenProps.firestoreProps.setUsers;
+  const sessions = screenProps.firestoreProps.sessions;
+  const setSessions = screenProps.firestoreProps.setSessions;
+
+  const today = new Date(Date.now()).getDay();
 
   /***************************************************************************
   SESSIONS FUNCTIONALITY CODE
    ***************************************************************************/
   var weeklySchedule = [0, 1, 2, 3, 4, 5, 6];
-  const sessionList = data.sessions
-    .filter((session) =>
+  const sessionList = Object.entries(sessions)
+    .filter(([key, session]) =>
       sessionsProps.selectedUser.courses.some((c) =>
         session.courses.includes(c)
       )
     )
-    .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+    .sort((a, b) => new Date(a[1].startTime) - new Date(b[1].startTime));
   const daySessions = weeklySchedule.map((x) =>
     sessionList.filter(
-      (session) => (new Date(session.startTime).getDay() - today + 1) % 7 == x
+      ([key, session]) =>
+        (new Date(session.startTime).getDay() - today + 1) % 7 == x
     )
   );
 
@@ -40,59 +49,67 @@ function SessionsList(props) {
     <View style={globalStyles.screen}>
       <ScrollView style={globalStyles.scrollView}>
         <Headline>Today's Sessions</Headline>
-        {daySessions[0].map((session, index) => (
-          <SessionCard
-            key={index}
-            subtitle={data.users[session.tutor - 1].name}
-            title={
-              session.type +
-              ": " +
-              data.courses[session.courses[0]].department +
-              " " +
-              (session.type == "Cafe"
-                ? ""
-                : data.courses[session.courses[0]].number)
-            }
-            action={(session) => {
-              screenProps.selectedProps.setSelectedSession(session);
-              props.navigation.navigate("Session Details");
-            }}
-            data={session}
-            content={
-                  <View style={globalStyles.courseContainer}>
-                {session.courses.map((id) => (
-                  <CourseItem
-                    key={id}
-                    department={data.courses[id].department}
-                    number={data.courses[id].number}
-                  ></CourseItem>
-                ))}
-              </View>
-            }
-          ></SessionCard>
-        ))}
+        {daySessions[0].map(([key, session]) => {
+          let index = parseInt(key);
+          return (
+            <SessionCard
+              key={index}
+              subtitle={users[session.tutor].name}
+              title={
+                session.type +
+                ": " +
+                (session.courses.length > 0
+                  ? courses[session.courses[0]].department +
+                    " " +
+                    (session.type === "Cafe"
+                      ? ""
+                      : courses[session.courses[0]].number)
+                  : "")
+              }
+              //   action={(session) => {
+              //     screenProps.selectedProps.setSelectedSession(session);
+              //     props.navigation.navigate("Session Details");
+              //   }}
+              data={session}
+              content={
+                <View style={globalStyles.courseContainer}>
+                  {session.courses.map((id) => (
+                    <CourseItem
+                      key={id}
+                      department={courses[id].department}
+                      number={courses[id].number}
+                    ></CourseItem>
+                  ))}
+                </View>
+              }
+            ></SessionCard>
+          );
+        })}
 
         <Headline>Future Sessions</Headline>
-        {daySessions
-          .slice(1)
-          .map((day) =>
-            day.map((session, index) => (
+        {daySessions.slice(1).map((day) =>
+          day.map(([key, session]) => {
+            let index = parseInt(key);
+            return (
               <SimplifiedSessionCard
                 key={index}
-                subtitle={data.users[session.tutor - 1].name}
+                subtitle={users[session.tutor].name}
                 title={
                   session.type +
                   ": " +
-                  data.courses[session.courses[0]].department +
-                  " " +
-                  (session.type == "Cafe"
-                    ? ""
-                    : data.courses[session.courses[0]].number)
+                  (session.courses.length > 0
+                    ? courses[session.courses[0]].department +
+                      " " +
+                      (session.type === "Cafe"
+                        ? ""
+                        : courses[session.courses[0]].number)
+                    : "")
                 }
                 content={session.startTime}
               ></SimplifiedSessionCard>
-            ))
-          )}
+            );
+          })
+        )}
       </ScrollView>
     </View>
   );

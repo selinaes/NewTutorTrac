@@ -26,7 +26,7 @@ import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 import { formatJSON, emailOf, logVal } from "../utils";
-const data = require("../data.json");
+// const data = require("../data.json");
 
 export default function NewUserScreen(props) {
   const screenProps = useContext(StateContext);

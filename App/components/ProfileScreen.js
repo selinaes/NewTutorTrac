@@ -26,7 +26,7 @@ import CourseItem from "./CourseItem.js";
 import SimplifiedSessionCard from "./SimplifiedSessionCard.js";
 import { firebaseGetSpecifiedUser, firebaseGetCourses } from "./Firestore";
 import { formatJSON, emailOf, logVal } from "../utils";
-const data = require("../data.json");
+// const data = require("../data.json");
 
 export default function ProfileScreen(props) {
   const screenProps = useContext(StateContext);
@@ -43,7 +43,6 @@ export default function ProfileScreen(props) {
   const sessions = screenProps.firestoreProps.sessions;
   const setSessions = screenProps.firestoreProps.setSessions;
 
-  const [attendedSessions, setAttendedSessions] = React.useState([]);
   const [hostedSessions, setHosted] = React.useState([]);
   const [tutoredCourses, setTutored] = React.useState([]);
 
@@ -66,21 +65,21 @@ export default function ProfileScreen(props) {
   /***************************************************************************
    USERS FUNCTIONALITY CODE
    ***************************************************************************/
-  async function firebaseGetAttendedSessions(UID) {
-    const q = query(
-      collection(db, "sessions"),
-      where("attendedUID", "array-contains-any", [UID])
-    );
-    const querySnapshot = await getDocs(q);
-    let attendedS = [];
-    // unsubscribe = onSnapshot(q, (querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      attendedS.push(doc.data());
-    });
-    // });
-    setAttendedSessions(attendedS);
-    // console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
-  }
+  //   async function firebaseGetAttendedSessions(UID) {
+  //     const q = query(
+  //       collection(db, "sessions"),
+  //       where("attendedUID", "array-contains-any", [UID])
+  //     );
+  //     const querySnapshot = await getDocs(q);
+  //     let attendedS = [];
+  //     // unsubscribe = onSnapshot(q, (querySnapshot) => {
+  //     querySnapshot.forEach((doc) => {
+  //       attendedS.push(doc.data());
+  //     });
+  //     // });
+  //     setAttendedSessions(attendedS);
+  //     // console.log(`on firebaseget: attendedSession('${formatJSON(attendedS)}')`);
+  //   }
 
   function signOutAndGoToSignIn() {
     profileProps.logOut();
