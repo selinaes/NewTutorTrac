@@ -44,19 +44,22 @@ export default function ProfileScreen(props) {
   const setSessions = screenProps.firestoreProps.setSessions;
 
   const [attendedSessions, setAttendedSessions] = React.useState([]);
+  const [hostedSessions, setHosted] = React.useState([]);
 
   //on mount and unmount
   useEffect(() => {
     console.log("ProfileScreen did mount");
-    // firebaseGetAttendedSessions(selectedUser.UID); // find user on mount
-    // console.log(
-    //   `on mount: firebaseGetAttendedSessions('${selectedUser.name}')`
-    // );
     return () => {
       // Anything in here is fired on component unmount.
       console.log("ProfileScreen did unmount");
     };
   }, []);
+
+  //mount + when sessions changed...
+  useEffect(() => {
+    console.log("filter hosted sessions");
+    filterHostedSessions();
+  }, [sessions]);
 
   /***************************************************************************
    USERS FUNCTIONALITY CODE
@@ -80,6 +83,13 @@ export default function ProfileScreen(props) {
   function signOutAndGoToSignIn() {
     profileProps.logOut();
     props.navigation.navigate("Log In");
+  }
+
+  function filterHostedSessions() {
+    let hosted = Object.entries(sessions).filter(
+      ([key, session]) => session.tutor === profileProps.selectedUser.UID
+    );
+    setHosted(hosted);
   }
 
   /***************************************************************************
@@ -153,43 +163,46 @@ export default function ProfileScreen(props) {
             })}
         </View>
 
-        <Headline>Hosted Sessions</Headline>
+        <Headline
+          style={
+            hostedSessions.length > 0
+              ? globalStyles.visible
+              : globalStyles.hidden
+          }
+        >
+          Hosted Sessions
+        </Headline>
         <Button
           title="Add New"
           onPress={() => props.navigation.navigate("Modify Session")}
         />
         <View style={globalStyles.courseContainer}>
-          {Object.entries(sessions)
-            .filter(
-              ([key, session]) =>
-                session.tutor === profileProps.selectedUser.UID
-            )
-            .map(([key, session]) => {
-              let index = parseInt(key);
-              return (
-                <SimplifiedSessionCard
-                  key={index}
-                  subtitle={users[session.tutor].name}
-                  title={
-                    session.type +
-                    ": " +
-                    (session.courses.length > 0
-                      ? courses[session.courses[0]].department +
-                        " " +
-                        (session.type == "Cafe"
-                          ? ""
-                          : courses[session.courses[0]].number)
-                      : "")
-                  }
-                  action={() => {
-                    selectedProps.setSelectedSession(session);
-                    //console.log(screenProps.selectedProps.selectedSession);
-                    props.navigation.navigate("Modify Session");
-                  }}
-                  content={session.startTime}
-                ></SimplifiedSessionCard>
-              );
-            })}
+          {hostedSessions.map(([key, session]) => {
+            let index = parseInt(key);
+            return (
+              <SimplifiedSessionCard
+                key={index}
+                subtitle={users[session.tutor].name}
+                title={
+                  session.type +
+                  ": " +
+                  (session.courses.length > 0
+                    ? courses[session.courses[0]].department +
+                      " " +
+                      (session.type == "Cafe"
+                        ? ""
+                        : courses[session.courses[0]].number)
+                    : "")
+                }
+                action={() => {
+                  selectedProps.setSelectedSession(session);
+                  //console.log(screenProps.selectedProps.selectedSession);
+                  props.navigation.navigate("Modify Session");
+                }}
+                content={session.startTime}
+              ></SimplifiedSessionCard>
+            );
+          })}
         </View>
         <Button title="Sign Out" onPress={signOutAndGoToSignIn} />
       </ScrollView>
