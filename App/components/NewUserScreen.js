@@ -4,18 +4,10 @@ import {
   Text,
   View,
   TextInput,
-  Button,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import {
-  Headline,
-  Paragraph,
-  BottomNavigation,
-  Avatar,
-  Appbar,
-  Checkbox,
-} from "react-native-paper";
+import { Appbar } from "react-native-paper";
 import {
   // for storage access
   collection,

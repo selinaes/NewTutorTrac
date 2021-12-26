@@ -287,7 +287,7 @@ export default function SignInScreen(props) {
             : globalStyles.hidden
         }
       >
-        <View style={globalStyles.labeledInput}>
+        <View style={globalStyles.loginInput}>
           <Text style={globalStyles.inputLabel}>Email:</Text>
           <TextInput
             placeholder="Enter an email address"
@@ -296,7 +296,7 @@ export default function SignInScreen(props) {
             onChangeText={(textVal) => setEmail(textVal)}
           />
         </View>
-        <View style={globalStyles.labeledInput}>
+        <View style={globalStyles.loginInput}>
           <Text style={globalStyles.inputLabel}>Password:</Text>
           <TextInput
             placeholder="Enter a password"

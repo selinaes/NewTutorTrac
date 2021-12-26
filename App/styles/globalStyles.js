@@ -17,6 +17,13 @@ export const globalStyles = StyleSheet.create({
     },
     labeledInput: {
         width: "100%",
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        flexWrap:"wrap",
+    },
+    loginInput: {
+        width: "100%",
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -24,7 +31,7 @@ export const globalStyles = StyleSheet.create({
         fontSize: 20,
     },
     textInput: {
-        width: "80%",
+        width: "70%",
         fontSize: 20,
         borderRadius: 5,
         paddingVertical: 8,
@@ -34,6 +41,7 @@ export const globalStyles = StyleSheet.create({
         marginBottom: 8,
     },
     buttonHolder: {
+        width: "100%",
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

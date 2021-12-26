@@ -1,6 +1,14 @@
-import React, { useContext, useEffect } from "react";
-import { StyleSheet, Text, View, TextInput, Button, ScrollView, TouchableOpacity } from "react-native";
-import {Picker} from '@react-native-picker/picker';
+import React, { useContext, useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Button,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import {
   Headline,
   Paragraph,
@@ -8,6 +16,9 @@ import {
   Avatar,
   Appbar,
   Checkbox,
+  RadioButton,
+  Text,
+  List,
 } from "react-native-paper";
 import {
   // for storage access
@@ -15,11 +26,12 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
-import DatePicker from 'react-native-date-picker';
+import DateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "react-native-date-picker";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
-import { formatJSON, emailOf } from "../utils";
+import { formatJSON, emailOf, logVal } from "../utils";
 const data = require("../data.json");
 
 export default function NewSessionScreen(props) {
@@ -28,23 +40,50 @@ export default function NewSessionScreen(props) {
 
   const db = screenProps.firebaseProps.db;
   const courses = screenProps.firestoreProps.courses;
-  const setCourses = screenProps.firestoreProps.setCourses;
+  const departments = screenProps.firestoreProps.departments;
 
-  console.log(selectedProps.selectedSession);
+  const [type, setType] = React.useState("");
+  const [department, setDept] = React.useState("");
+  const [location, setLocation] = React.useState("");
+  const [capacity, setCapacity] = React.useState("");
+  const [start, setStart] = React.useState(new Date(Date.now()));
+  const [end, setEnd] = React.useState(new Date(Date.now()));
+  const [checked, setChecked] = React.useState([]);
 
-  const current = selectedProps.selectedSession;
-  const [type, setType] = React.useState(current.type);
-  const [location, setLocation] = React.useState(current.location);
-  const [capacity, setCapacity] = React.useState(current.maxCapacity.toString());
-  const [start, setStart] = React.useState(new Date(current.startTime));
-  const [end, setEnd] = React.useState(new Date(current.endTime));
-  const [checked, setChecked] = React.useState(current.courses);
+  const [showSD, setShowSD] = useState(false);
+  const [showST, setShowST] = useState(false);
+  const [showED, setShowED] = useState(false);
+  const [showET, setShowET] = useState(false);
+
+  const onChangeSD = (event, selectedDate) => {
+    const currentDate = logVal("SD selectedDate", selectedDate) || start;
+    setShowSD(Platform.OS === "ios");
+    setStart(currentDate);
+  };
+
+  const onChangeST = (event, selectedTime) => {
+    const currentTime = selectedTime || start;
+    setShowST(Platform.OS === "ios");
+    setStart(currentTime);
+  };
+
+  const onChangeED = (event, selectedDate) => {
+    const currentDate = logVal("ED selectedDate", selectedDate) || end;
+    setShowED(Platform.OS === "ios");
+    setEnd(currentDate);
+  };
+
+  const onChangeET = (event, selectedTime) => {
+    const currentTime = selectedTime || end;
+    setShowET(Platform.OS === "ios");
+    setEnd(currentTime);
+  };
 
   //on mount and unmount
   useEffect(() => {
     console.log("NewUserScreen did mount");
-    firebaseGetCourses();
-    //console.log(`on mount: courses('${formatJSON(courses)}')`);
+    fillInfoFromSelected();
+    // getDepartments();
     return () => {
       // Anything in here is fired on component unmount.
       console.log("NewUserScreen did unmount");
@@ -52,105 +91,185 @@ export default function NewSessionScreen(props) {
     };
   }, []);
 
-  async function firebaseGetCourses() {
-    const q = query(collection(db, "courses"));
-    const querySnapshot = await getDocs(q);
-    let courses = [];
-    // unsubscribe = onSnapshot(q, (querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      courses.push(doc.data());
-    });
-    // });
-    // console.log(`on firebasegetCourses: courses('${formatJSON(courses)}')`);
-    setCourses(courses);
+  function fillInfoFromSelected() {
+    if (selectedProps.selectedSession) {
+      setType(selectedProps.selectedSession[1].type);
+      setDept(selectedProps.selectedSession[1].department);
+      setLocation(selectedProps.selectedSession[1].location);
+      setCapacity(selectedProps.selectedSession[1].maxCapacity);
+      setStart(new Date(selectedProps.selectedSession[1].startTime));
+      setEnd(new Date(selectedProps.selectedSession[1].endTime));
+      setChecked(selectedProps.selectedSession[1].courses);
+      const SID = selectedProps.selectedSession[0];
+    }
   }
-  
+
   return (
     <View style={globalStyles.screen}>
       <Appbar.Header>
-        <Appbar.Content title="Modify Session" />
+        <Appbar.Content title="Add/Modify Session" />
       </Appbar.Header>
       <ScrollView style={globalStyles.scrollView}>
-      <View style={{ height: 400, width: 300 }}>
-        <View style={globalStyles.labeledInput}>
-          <Picker
-            selectedValue={type}
-            style={{ height: 200, width: 300 }}
-            onValueChange={(itemValue, itemIndex) => setType(itemValue)}
+        <View style={{ flex: 1 }}>
+          <RadioButton.Group
+            onValueChange={(newValue) => setType(newValue)}
+            value={type}
           >
-            <Picker.Item label=" select session type" value="" />
-            <Picker.Item label="Office Hours" value="OH" />
-              <Picker.Item label="Supplemental Instruction" value="SI" />
-              <Picker.Item label="Subject Cafe" value="Cafe" />
-          </Picker>
-        </View>
+            <View style={globalStyles.labeledInput}>
+              <Text style={globalStyles.inputLabel}>Type: </Text>
+              <RadioButton value="OH" />
+              <Text>Office Hours</Text>
+            </View>
+            <View style={globalStyles.labeledInput}>
+              <RadioButton value="SI" />
+              <Text>Supplemental Instruction</Text>
+            </View>
+            <View style={globalStyles.labeledInput}>
+              <RadioButton value="Cafe" />
+              <Text>Subject Cafe</Text>
+            </View>
+          </RadioButton.Group>
+
           <View style={globalStyles.labeledInput}>
-            <Text style={globalStyles.inputLabel}>Location:</Text>
+            <Text style={globalStyles.inputLabel}>Department: </Text>
+            <Picker
+              selectedValue={department}
+              style={styles.pickerStyles}
+              mode={"dropdown"}
+              onValueChange={(itemValue, itemIndex) => setDept(itemValue)}
+            >
+              {departments.map((d) => (
+                <Picker.Item key={d} label={d} value={d} />
+              ))}
+            </Picker>
+          </View>
+
+          <View style={globalStyles.labeledInput}>
+            <Text style={globalStyles.inputLabel}>Location: </Text>
             <TextInput
               placeholder="Enter location"
               style={globalStyles.textInput}
-            value={location}
+              value={location}
               onChangeText={(textVal) => setLocation(textVal)}
             />
-        </View>
-        <View style={globalStyles.labeledInput}>
-            <Text style={globalStyles.inputLabel}>Capacity:</Text>
+          </View>
+          <View style={globalStyles.labeledInput}>
+            <Text style={globalStyles.inputLabel}>Capacity: </Text>
             <TextInput
               placeholder="Enter capacity"
               style={globalStyles.textInput}
-            value={capacity}
-            keyboardType = "number-pad"
-              onValueChange={(value) => setCapacity(value)}
+              value={capacity}
+              keyboardType="number-pad"
+              onChangeText={(val) => setCapacity(val.toString())}
             />
           </View>
-      </View>
-      <Text style={globalStyles.inputLabel}>Associated Courses</Text>
-          <View style={globalStyles.courseContainer}>
-          {courses.map((course, index) => (
-            <TouchableOpacity key={index} onPress={() => {
-              checked.includes(index) ?
-                setChecked(checked.filter(course => course!= index)):
-                setChecked([...checked, index]);
-              }}>
-              <CourseItem color={checked.includes(index)? "aliceblue" : "coral"}
-                department={course.department}
-                number={course.number}
+
+          <View style={globalStyles.labeledInput}>
+            <Text style={globalStyles.inputLabel}>Date and Time: </Text>
+            <Text>Start: {start.toString()}</Text>
+            <View style={globalStyles.buttonHolder}>
+              <Button onPress={() => setShowSD(true)} title="Set Start Date" />
+              <Button onPress={() => setShowST(true)} title="Set Start Time" />
+            </View>
+            <Text>End: {end.toString()}</Text>
+            <View style={globalStyles.buttonHolder}>
+              <Button onPress={() => setShowED(true)} title="Set End Date" />
+              <Button onPress={() => setShowET(true)} title="Set End Time" />
+            </View>
+            {showSD && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={start}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeSD}
+              />
+            )}
+            {showST && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={start}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeST}
+              />
+            )}
+            {showED && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={end}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeED}
+              />
+            )}
+            {showET && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={end}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChangeET}
+              />
+            )}
+          </View>
+        </View>
+        <Text style={globalStyles.inputLabel}>Associated Courses</Text>
+        <View style={globalStyles.courseContainer}>
+          {Object.entries(courses).map(([key, course]) => {
+            let index = parseInt(key);
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  checked.includes(index)
+                    ? setChecked(checked.filter((course) => course != index))
+                    : setChecked([...checked, index]);
+                }}
+              >
+                <CourseItem
+                  color={checked.includes(index) ? "coral" : "aliceblue"}
+                  department={course.department}
+                  number={course.number}
                 ></CourseItem>
-            </TouchableOpacity>
-          ))}
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </ScrollView>
 
-        <View style={globalStyles.buttonHolder}>
-          <TouchableOpacity
+      <View style={globalStyles.buttonHolder}>
+        <TouchableOpacity
           style={globalStyles.button}
           onPress={() => {
-            /*let temp = user;
-            temp['name'] = name;
-            temp['classyear'] = classyear;
-            temp['courses'] = checked;
-            setUser(temp);*/
-            // UPDATE DATABASE HERE
-            props.navigation.navigate("Home")
-          }}
-          >
-          <Text style={globalStyles.buttonText}>Save</Text>
-        </TouchableOpacity>
-          <TouchableOpacity
-          style={globalStyles.button}
-          onPress={() => {
-            /*let temp = user;
-            temp['name'] = name;
-            temp['classyear'] = classyear;
-            temp['courses'] = checked;
-            setUser(temp);*/
             // UPDATE DATABASE HERE
             props.navigation.navigate("Home");
           }}
-          >
-            <Text style={globalStyles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
+        >
+          <Text style={globalStyles.buttonText}>Save</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={globalStyles.button}
+          onPress={() => {
+            // UPDATE DATABASE HERE
+            props.navigation.navigate("Home");
+          }}
+        >
+          <Text style={globalStyles.buttonText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  pickerStyles: {
+    width: "60%",
+    backgroundColor: "white",
+    color: "black",
+  },
+});

@@ -97,6 +97,7 @@ export default function App(props) {
   const [users, setUsers] = React.useState({});
   const [sessions, setSessions] = React.useState({});
   const [courses, setCourses] = React.useState({});
+  const [departments, setDepts] = React.useState([]);
 
   // State for users & profile
   const [selectedUser, setSelectedUser] = React.useState(null);
@@ -113,13 +114,10 @@ export default function App(props) {
         courses: [],
         location: "",
         startTime: new Date(Date.now()).toString(),
-        SID: data.sessions.length,
         department: "",
-        endTime: new Date(Date.now())
-          .setHours(Date.now.getHours() + 1)
-          .toString(),
+        endTime: new Date(Date.now()).toString(),
         type: "",
-        maxCapacity: 0,
+        maxCapacity: "",
       },
     ]);
 
@@ -150,6 +148,7 @@ export default function App(props) {
     setSessions,
     courses,
     setCourses,
+    departments,
   };
 
   const screenProps = {
@@ -173,6 +172,13 @@ export default function App(props) {
     });
     setCourses(FScourses);
     console.log(`Firebase got courses: '${formatJSON(courses)}')`);
+    //calculate existing departments
+    let depts = [];
+    Object.entries(FScourses).forEach(([key, course]) => {
+      depts.includes(course.department) ? null : depts.push(course.department);
+    });
+    depts.sort();
+    setDepts(depts);
   }
 
   async function firebaseGetUsers() {
@@ -205,6 +211,7 @@ export default function App(props) {
     console.log(`logOut: emailOf(loggedInUser)=${emailOf(loggedInUser)}`);
     console.log(`logOut: setLoggedInUser(null)`);
     setLoggedInUser(null);
+    setSelectedUser(null);
     console.log("logOut: signOut(auth)");
     signOut(auth); // Will eventually set auth.currentUser to null
   }
@@ -255,7 +262,10 @@ export default function App(props) {
             <Stack.Screen name="Log In" component={SignInScreen} />
             <Stack.Screen name="Setup" component={NewUserScreen} />
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Modify Session" component={NewSessionScreen} />
+            <Stack.Screen
+              name="Add/Modify Session"
+              component={NewSessionScreen}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

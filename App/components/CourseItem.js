@@ -6,7 +6,7 @@ import { Chip } from "react-native-paper";
 export default function CourseItem(props) {
     var styles = {
     flexDirection: "row",
-    width: 120,
+    width: 110,
     margin: 3,
     textAlign: "center",
     backgroundColor: "coral"

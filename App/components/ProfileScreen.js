@@ -206,7 +206,7 @@ export default function ProfileScreen(props) {
         </Headline>
         <Button
           title="Add New"
-          onPress={() => props.navigation.navigate("Modify Session")}
+          onPress={() => props.navigation.navigate("Add/Modify Session")}
         />
         <View style={globalStyles.courseContainer}>
           {hostedSessions.map(([key, session]) => {
@@ -227,9 +227,9 @@ export default function ProfileScreen(props) {
                     : "")
                 }
                 action={() => {
-                  selectedProps.setSelectedSession(session);
+                  selectedProps.setSelectedSession([key, session]);
                   //console.log(screenProps.selectedProps.selectedSession);
-                  props.navigation.navigate("Modify Session");
+                  props.navigation.navigate("Add/Modify Session");
                 }}
                 content={session.startTime}
               ></SimplifiedSessionCard>
