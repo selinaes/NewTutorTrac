@@ -36,7 +36,7 @@ export function alertVal(msg, val) {
 
 /** Write msg and value to console.log before returning value */
 export function logVal(msg, val) {
-  console.log(`${msg}:${JSON.stringify(val)}`);
+  console.log(`${msg}:${JSON.stringify(val,null,2)}`);
   return val;
 }
 

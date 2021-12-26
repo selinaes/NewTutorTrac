@@ -11,19 +11,9 @@ import {
   // access to Firestore features:
   getFirestore,
   collection,
-  doc,
-  addDoc,
-  setDoc,
-  onSnapshot,
   query,
-  where,
   getDocs,
 } from "firebase/firestore";
-import {
-  // access to Firebase storage features (for files like images, video, etc.)
-  getStorage,
-} from "firebase/storage";
-import { Picker } from "@react-native-picker/picker";
 import { formatJSON, emailOf } from "./utils";
 import { Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
@@ -58,7 +48,6 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp); // *** new for Firestore
-const storage = getStorage(firebaseApp, "cs317-tutortrac.appspot.com"); // for storing images in Firebase storage
 
 function HomeScreen(props) {
   return (
@@ -110,11 +99,7 @@ export default function App(props) {
   const [courses, setCourses] = React.useState({});
 
   // State for users & profile
-  const [selectedUser, setSelectedUser] = React.useState(
-    loggedInUser
-      ? data.users.filter((user) => user.email === email)[0]
-      : data.users[0]
-  ); //for testing
+  const [selectedUser, setSelectedUser] = React.useState(data.users[0]); //default fake data, for testing purpose
 
   const [selectedSession, setSelectedSession] = React.useState(null);
   const resetSelectedSession = () =>
@@ -138,10 +123,11 @@ export default function App(props) {
       },
     ]);
 
-  const firebaseProps = { auth, db, storage };
+  const firebaseProps = { auth, db };
   const profileProps = { selectedUser, setSelectedUser, logOut };
-  const sessionsProps = { selectedUser, setSelectedUser };
   const selectedProps = {
+    selectedUser,
+    setSelectedUser,
     selectedSession,
     setSelectedSession,
     resetSelectedSession,
@@ -155,8 +141,6 @@ export default function App(props) {
     loggedInUser,
     setLoggedInUser,
     displayStates,
-    selectedUser,
-    setSelectedUser,
   };
 
   const firestoreProps = {
@@ -171,7 +155,6 @@ export default function App(props) {
   const screenProps = {
     signedInProps,
     profileProps,
-    sessionsProps,
     selectedProps,
     firebaseProps,
     firestoreProps,
@@ -234,9 +217,6 @@ export default function App(props) {
         </Text>
         <Text style={globalStyles.json}>
           LoggedIn User: {formatJSON(loggedInUser)}
-        </Text>
-        <Text style={globalStyles.json}>
-          Courses: {formatJSON(data.courses.slice(1, 3))}
         </Text>
       </ScrollView>
     );

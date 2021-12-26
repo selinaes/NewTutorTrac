@@ -16,7 +16,6 @@ const data = require("../data.json");
 function SessionsList(props) {
   const screenProps = useContext(StateContext);
   //(screenProps)
-  const sessionsProps = screenProps.sessionsProps;
 
   const courses = screenProps.firestoreProps.courses;
   const setCourses = screenProps.firestoreProps.setCourses;
@@ -33,7 +32,7 @@ function SessionsList(props) {
   var weeklySchedule = [0, 1, 2, 3, 4, 5, 6];
   const sessionList = Object.entries(sessions)
     .filter(([key, session]) =>
-      sessionsProps.selectedUser.courses.some((c) =>
+      screenProps.selectedProps.selectedUser.courses.some((c) =>
         session.courses.includes(c)
       )
     )

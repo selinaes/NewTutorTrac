@@ -21,23 +21,20 @@ import {
   // for logging out:
   signOut,
 } from "firebase/auth";
+import { doc, getDocs, query, where, collection } from "firebase/firestore";
+import { formatJSON, emailOf, logVal } from "../utils";
 
 const data = require("../data.json");
 
 const selectSignedInUser = true;
-function emailOf(user) {
-  if (user) {
-    return user.email;
-  } else {
-    return null;
-  }
-}
 
 export default function SignInScreen(props) {
   const [errorMsg, setErrorMsg] = React.useState("");
   const screenProps = useContext(StateContext);
   const signedInProps = screenProps.signedInProps;
+  const selectedProps = screenProps.selectedProps;
   const auth = screenProps.firebaseProps.auth;
+  const db = screenProps.firebaseProps.db;
 
   const email = signedInProps.email;
   const setEmail = signedInProps.setEmail;
@@ -82,7 +79,7 @@ export default function SignInScreen(props) {
       // or else we wouldn't be here
     }
     if (!email.includes("@wellesley.edu")) {
-      setErrorMsg("Not a valid email address");
+      setErrorMsg("Not a valid Wellesley email address");
       return;
     }
     if (password.length < 6) {
@@ -161,11 +158,11 @@ export default function SignInScreen(props) {
         );
 
         // Only log in auth.currentUser if their email is verified
-        checkEmailVerification();
+        checkEmailVerification().then((user) => checkNewUser(user));
 
-        signedInProps.setSelectedUser(
-          data.users.filter((user) => user.email === email)[0]
-        );
+        // selectedProps.setSelectedUser(
+        //   data.users.filter((user) => user.email === email)[0]
+        // );
 
         // Clear email/password inputs
         //setEmail("");
@@ -191,19 +188,52 @@ export default function SignInScreen(props) {
       console.log(
         `checkEmailVerification: auth.currentUser.emailVerified=${auth.currentUser.emailVerified}`
       );
-      if (auth.currentUser.emailVerified) {
-        console.log(
-          `checkEmailVerification: setLoggedInUser for ${auth.currentUser.email}`
-        );
-        setLoggedInUser(auth.currentUser);
-        console.log("checkEmailVerification: setErrorMsg('')");
-        setErrorMsg("");
-      } else {
-        console.log("checkEmailVerification: remind user to verify email");
-        setErrorMsg(
-          `You cannot sign in as ${auth.currentUser.email} until you verify that this is your email address. You can verify this email address by clicking on the link in a verification email sent by this app to ${auth.currentUser.email}.`
-        );
-      }
+      return new Promise((resolve, reject) => {
+        if (auth.currentUser.emailVerified) {
+          console.log(
+            `checkEmailVerification: setLoggedInUser for ${auth.currentUser.email}`
+          );
+          setLoggedInUser(auth.currentUser);
+          console.log("checkEmailVerification: setErrorMsg('')");
+          setErrorMsg("");
+          resolve(auth.currentUser);
+        } else {
+          console.log("checkEmailVerification: remind user to verify email");
+          setErrorMsg(
+            `You cannot sign in as ${auth.currentUser.email} until you verify that this is your email address. You can verify this email address by clicking on the link in a verification email sent by this app to ${auth.currentUser.email}.`
+          );
+          reject();
+        }
+      });
+    }
+  }
+
+  async function checkNewUser(user) {
+    let curUser = await firebaseGetCurrentUser(user);
+    if (curUser) {
+      selectedProps.setSelectedUser(curUser); //set selected user as this existing user
+      props.navigation.navigate("Home");
+    } else {
+      props.navigation.navigate("Setup");
+    }
+  }
+
+  async function firebaseGetCurrentUser(user) {
+    const q = query(
+      collection(db, "users"),
+      where("email", "==", logVal("emailOf(loggedInUser)", emailOf(user)))
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (logVal("exists?", !querySnapshot.empty)) {
+      let curUser = {};
+      querySnapshot.forEach((doc) => {
+        curUser = { ...doc.data(), UID: parseInt(doc.id) };
+      });
+      return logVal("curUser", curUser);
+    } else {
+      // doc.data() will be undefined in this case
+      return false;
     }
   }
 
@@ -216,7 +246,7 @@ export default function SignInScreen(props) {
     console.log(`logOut: setLoggedInUser(null)`);
     setLoggedInUser(null);
     console.log("logOut: signOut(auth)");
-    signedInProps.setSelectedUser(data.users[0]);
+    selectedProps.setSelectedUser(data.users[0]);
     signOut(auth); // Will eventually set auth.currentUser to null
   }
 
