@@ -99,7 +99,7 @@ export default function App(props) {
   const [courses, setCourses] = React.useState({});
 
   // State for users & profile
-  const [selectedUser, setSelectedUser] = React.useState(data.users[0]); //default fake data, for testing purpose
+  const [selectedUser, setSelectedUser] = React.useState(null);
 
   const [selectedSession, setSelectedSession] = React.useState(null);
   const resetSelectedSession = () =>

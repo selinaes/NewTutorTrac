@@ -21,6 +21,9 @@ import {
   collection,
   query,
   getDocs,
+  updateDoc,
+  where,
+  doc,
 } from "firebase/firestore";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
@@ -30,24 +33,60 @@ import { formatJSON, emailOf, logVal } from "../utils";
 
 export default function NewUserScreen(props) {
   const screenProps = useContext(StateContext);
-  const user = screenProps.signedInProps.selectedUser;
+  const loggedInUser = screenProps.signedInProps.loggedInUser;
+  const selectedProps = screenProps.selectedProps;
   const db = screenProps.firebaseProps.db;
   const courses = screenProps.firestoreProps.courses;
 
-  const [checked, setChecked] = React.useState(user.courses);
-  const [name, setName] = React.useState(user.name);
-  const [classyear, setYear] = React.useState(user.classyear.toString());
+  const [checked, setChecked] = React.useState([]);
+  const [name, setName] = React.useState("");
+  const [classyear, setYear] = React.useState("");
+  const [errorMsg, setErrorMsg] = React.useState("");
 
   //on mount and unmount
   useEffect(() => {
     console.log("NewUserScreen did mount");
-    // firebaseGetCourses();
-    // console.log(`on mount: courses('${formatJSON(courses)}')`);
+    fillInfoFromCurrent();
     return () => {
       // Anything in here is fired on component unmount.
       console.log("NewUserScreen did unmount");
     };
   }, []);
+
+  useEffect(() => {
+    if (checkNonEmpty()) setErrorMsg("");
+  }, [name, checked, classyear]);
+
+  function fillInfoFromCurrent() {
+    if (selectedProps.selectedUser) {
+      setChecked(selectedProps.selectedUser.courses);
+      setName(selectedProps.selectedUser.name);
+      setYear(selectedProps.selectedUser.classyear);
+    }
+  }
+
+  function checkNonEmpty() {
+    return name !== "" && classyear !== "" && checked.length > 0;
+  }
+
+  async function firebaseUpdateUser() {
+    const q = query(
+      collection(db, "users"),
+      where("email", "==", emailOf(loggedInUser))
+    );
+    const querySnapshot = await getDocs(q);
+
+    let uid;
+    querySnapshot.forEach((doc) => {
+      uid = doc.id;
+    });
+
+    await updateDoc(doc(db, "users", uid), {
+      name: name,
+      classyear: logVal("classyear", classyear),
+      courses: checked,
+    });
+  }
 
   return (
     <View style={globalStyles.screen}>
@@ -70,7 +109,7 @@ export default function NewUserScreen(props) {
           style={globalStyles.textInput}
           value={classyear}
           keyboardType="number-pad"
-          onValueChange={(val) => setYear(val)}
+          onChangeText={(val) => setYear(val.toString())}
         />
       </View>
       <Text style={globalStyles.inputLabel}>Current Courses</Text>
@@ -97,18 +136,30 @@ export default function NewUserScreen(props) {
           })}
         </View>
       </ScrollView>
-
+      <View
+        style={errorMsg === "" ? globalStyles.hidden : globalStyles.errorBox}
+      >
+        <Text style={globalStyles.errorMessage}>{errorMsg}</Text>
+      </View>
       <View style={globalStyles.buttonHolder}>
         <TouchableOpacity
           style={globalStyles.button}
-          onPress={() => {
-            /*let temp = user;
-            temp['name'] = name;
-            temp['classyear'] = classyear;
-            temp['courses'] = checked;
-            setUser(temp);*/
+          onPress={async () => {
             // UPDATE DATABASE HERE
-            props.navigation.navigate("Home");
+            if (checkNonEmpty()) {
+              await firebaseUpdateUser();
+              selectedProps.setSelectedUser({
+                name: name,
+                classyear: classyear,
+                courses: checked,
+                email: emailOf(loggedInUser),
+              });
+              props.navigation.navigate("Home");
+            } else {
+              setErrorMsg(
+                "Please fill in both name and classyear, and select your courses!"
+              );
+            }
           }}
         >
           <Text style={globalStyles.buttonText}>Submit</Text>

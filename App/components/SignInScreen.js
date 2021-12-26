@@ -21,7 +21,16 @@ import {
   // for logging out:
   signOut,
 } from "firebase/auth";
-import { doc, getDocs, query, where, collection } from "firebase/firestore";
+import {
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  query,
+  where,
+  collection,
+} from "firebase/firestore";
 import { formatJSON, emailOf, logVal } from "../utils";
 
 const data = require("../data.json");
@@ -78,10 +87,10 @@ export default function SignInScreen(props) {
       signOut(auth); // sign out auth's current user (who is not loggedInUser,
       // or else we wouldn't be here
     }
-    if (!email.includes("@wellesley.edu")) {
-      setErrorMsg("Not a valid Wellesley email address");
-      return;
-    }
+    // if (!email.includes("@wellesley.edu")) {
+    //   setErrorMsg("Not a valid Wellesley email address");
+    //   return;
+    // }
     if (password.length < 6) {
       setErrorMsg("Password too short");
       return;
@@ -209,13 +218,28 @@ export default function SignInScreen(props) {
   }
 
   async function checkNewUser(user) {
+    //passed in user: auth.currentUser
     let curUser = await firebaseGetCurrentUser(user);
     if (curUser) {
       selectedProps.setSelectedUser(curUser); //set selected user as this existing user
       props.navigation.navigate("Home");
     } else {
+      await firebaseAddNewUser(user);
       props.navigation.navigate("Setup");
     }
+  }
+
+  async function firebaseAddNewUser(user) {
+    const docSnap = await getDoc(doc(db, "ids", "UID"));
+    let next = docSnap.data().maxUsed + 1;
+
+    await setDoc(doc(db, "users", next.toString()), {
+      email: emailOf(user),
+    });
+
+    await updateDoc(doc(db, "ids", "UID"), {
+      maxUsed: next,
+    });
   }
 
   async function firebaseGetCurrentUser(user) {
