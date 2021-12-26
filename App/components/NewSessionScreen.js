@@ -25,6 +25,11 @@ import {
   collection,
   query,
   getDocs,
+  getDoc,
+  where,
+  setDoc,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "react-native-date-picker";
@@ -42,6 +47,18 @@ export default function NewSessionScreen(props) {
   const courses = screenProps.firestoreProps.courses;
   const departments = screenProps.firestoreProps.departments;
 
+  //on mount and unmount
+  useEffect(() => {
+    console.log("NewUserScreen did mount");
+    fillInfoFromSelected();
+    // getDepartments();
+    return () => {
+      // Anything in here is fired on component unmount.
+      console.log("NewUserScreen did unmount");
+      screenProps.selectedProps.setSelectedSession(null);
+    };
+  }, []);
+
   const [type, setType] = React.useState("");
   const [department, setDept] = React.useState("");
   const [location, setLocation] = React.useState("");
@@ -49,6 +66,52 @@ export default function NewSessionScreen(props) {
   const [start, setStart] = React.useState(new Date(Date.now()));
   const [end, setEnd] = React.useState(new Date(Date.now()));
   const [checked, setChecked] = React.useState([]);
+  let currSID = null;
+
+  var days = ["U", "M", "T", "W", "R", "F", "S"]; //Start with Sunday, end with Saturday
+
+  async function firebaseAddNewSession() {
+    const docSnap = await getDoc(doc(db, "ids", "SID"));
+    let next = docSnap.data().maxUsed + 1;
+
+    await setDoc(doc(db, "sessions", next.toString()), {
+      courses: checked,
+      department: department,
+      location: location,
+      maxCapacity: capacity,
+      recurring: true, //now set to arbitruary true
+      recurringDay: days[new Date(start).getDay()],
+      tutor: selectedProps.selectedUser.UID,
+      type: type,
+      startTime: start.toString(),
+      endTime: end.toString(),
+    });
+
+    await updateDoc(doc(db, "ids", "SID"), {
+      maxUsed: next,
+    });
+
+    currSID = next;
+  }
+
+  // async function firebaseUpdateSession() {
+  //   const q = query(
+  //     collection(db, "users"),
+  //     where("email", "==", emailOf(loggedInUser))
+  //   );
+  //   const querySnapshot = await getDocs(q);
+
+  //   let uid;
+  //   querySnapshot.forEach((doc) => {
+  //     uid = doc.id;
+  //   });
+
+  //   await updateDoc(doc(db, "users", uid), {
+  //     name: name,
+  //     classyear: logVal("classyear", classyear),
+  //     courses: checked,
+  //   });
+  // }
 
   const [showSD, setShowSD] = useState(false);
   const [showST, setShowST] = useState(false);
@@ -79,18 +142,6 @@ export default function NewSessionScreen(props) {
     setEnd(currentTime);
   };
 
-  //on mount and unmount
-  useEffect(() => {
-    console.log("NewUserScreen did mount");
-    fillInfoFromSelected();
-    // getDepartments();
-    return () => {
-      // Anything in here is fired on component unmount.
-      console.log("NewUserScreen did unmount");
-      screenProps.selectedProps.resetSelectedSession();
-    };
-  }, []);
-
   function fillInfoFromSelected() {
     if (selectedProps.selectedSession) {
       setType(selectedProps.selectedSession[1].type);
@@ -100,7 +151,7 @@ export default function NewSessionScreen(props) {
       setStart(new Date(selectedProps.selectedSession[1].startTime));
       setEnd(new Date(selectedProps.selectedSession[1].endTime));
       setChecked(selectedProps.selectedSession[1].courses);
-      const SID = selectedProps.selectedSession[0];
+      currSID = selectedProps.selectedSession[0];
     }
   }
 
@@ -245,8 +296,14 @@ export default function NewSessionScreen(props) {
       <View style={globalStyles.buttonHolder}>
         <TouchableOpacity
           style={globalStyles.button}
-          onPress={() => {
+          onPress={async () => {
             // UPDATE DATABASE HERE
+            if (selectedProps.selectedSession) {
+              //if has selected session, update
+            } else {
+              //no selected session (value=null), add new
+              await firebaseAddNewSession();
+            }
             props.navigation.navigate("Home");
           }}
         >
@@ -259,7 +316,7 @@ export default function NewSessionScreen(props) {
             props.navigation.navigate("Home");
           }}
         >
-          <Text style={globalStyles.buttonText}>Delete</Text>
+          <Text style={globalStyles.buttonText}>Cancel</Text>
         </TouchableOpacity>
       </View>
     </View>

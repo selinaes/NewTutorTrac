@@ -224,7 +224,10 @@ export default function SignInScreen(props) {
       selectedProps.setSelectedUser(curUser); //set selected user as this existing user
       props.navigation.navigate("Home");
     } else {
-      await firebaseAddNewUser(user);
+      //case when it is a first-time user
+      let newUID = await firebaseAddNewUser(user);
+      let userObj = { UID: newUID, email: emailOf(user) };
+      selectedProps.setSelectedUser(userObj);
       props.navigation.navigate("Setup");
     }
   }
@@ -240,6 +243,7 @@ export default function SignInScreen(props) {
     await updateDoc(doc(db, "ids", "UID"), {
       maxUsed: next,
     });
+    return next;
   }
 
   async function firebaseGetCurrentUser(user) {
@@ -270,7 +274,7 @@ export default function SignInScreen(props) {
     console.log(`logOut: setLoggedInUser(null)`);
     setLoggedInUser(null);
     console.log("logOut: signOut(auth)");
-    selectedProps.setSelectedUser(data.users[0]);
+    selectedProps.setSelectedUser(null);
     signOut(auth); // Will eventually set auth.currentUser to null
   }
 
