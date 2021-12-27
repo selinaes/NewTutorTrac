@@ -1,5 +1,5 @@
 # TutorTrac
-CS 317 final project: reimagining TutorTrac as a mobile app.
+Final project: reimagining TutorTrac as a mobile app.
 
 ## Alpha Version Overview
 ### State of implementation
