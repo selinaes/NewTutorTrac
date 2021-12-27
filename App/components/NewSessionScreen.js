@@ -9,17 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import {
-  Headline,
-  Paragraph,
-  BottomNavigation,
-  Avatar,
-  Appbar,
-  Checkbox,
-  RadioButton,
-  Text,
-  List,
-} from "react-native-paper";
+import { Appbar, RadioButton, Text, List } from "react-native-paper";
 import {
   // for storage access
   collection,
@@ -32,12 +22,10 @@ import {
   doc,
 } from "firebase/firestore";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import DatePicker from "react-native-date-picker";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
 import { formatJSON, emailOf, logVal } from "../utils";
-const data = require("../data.json");
 
 export default function NewSessionScreen(props) {
   const screenProps = useContext(StateContext);
@@ -59,6 +47,20 @@ export default function NewSessionScreen(props) {
     };
   }, []);
 
+  const [currSID, setSID] = React.useState(null);
+  function fillInfoFromSelected() {
+    if (selectedProps.selectedSession) {
+      setType(selectedProps.selectedSession[1].type);
+      setDept(selectedProps.selectedSession[1].department);
+      setLocation(selectedProps.selectedSession[1].location);
+      setCapacity(selectedProps.selectedSession[1].maxCapacity.toString());
+      setStart(new Date(selectedProps.selectedSession[1].startTime));
+      setEnd(new Date(selectedProps.selectedSession[1].endTime));
+      setChecked(selectedProps.selectedSession[1].courses);
+      setSID(logVal("currSID", selectedProps.selectedSession[0]));
+    }
+  }
+
   const [type, setType] = React.useState("");
   const [department, setDept] = React.useState("");
   const [location, setLocation] = React.useState("");
@@ -66,7 +68,6 @@ export default function NewSessionScreen(props) {
   const [start, setStart] = React.useState(new Date(Date.now()));
   const [end, setEnd] = React.useState(new Date(Date.now()));
   const [checked, setChecked] = React.useState([]);
-  let currSID = null;
 
   var days = ["U", "M", "T", "W", "R", "F", "S"]; //Start with Sunday, end with Saturday
 
@@ -78,40 +79,35 @@ export default function NewSessionScreen(props) {
       courses: checked,
       department: department,
       location: location,
-      maxCapacity: capacity,
+      maxCapacity: parseInt(capacity),
       recurring: true, //now set to arbitruary true
       recurringDay: days[new Date(start).getDay()],
       tutor: selectedProps.selectedUser.UID,
       type: type,
       startTime: start.toString(),
       endTime: end.toString(),
+      attendedUID: [],
     });
 
     await updateDoc(doc(db, "ids", "SID"), {
       maxUsed: next,
     });
-
-    currSID = next;
   }
 
-  // async function firebaseUpdateSession() {
-  //   const q = query(
-  //     collection(db, "users"),
-  //     where("email", "==", emailOf(loggedInUser))
-  //   );
-  //   const querySnapshot = await getDocs(q);
-
-  //   let uid;
-  //   querySnapshot.forEach((doc) => {
-  //     uid = doc.id;
-  //   });
-
-  //   await updateDoc(doc(db, "users", uid), {
-  //     name: name,
-  //     classyear: logVal("classyear", classyear),
-  //     courses: checked,
-  //   });
-  // }
+  async function firebaseUpdateSession() {
+    await updateDoc(doc(db, "sessions", logVal("docID", currSID.toString())), {
+      courses: checked,
+      department: department,
+      location: location,
+      maxCapacity: parseInt(capacity),
+      recurringDay: days[new Date(start).getDay()],
+      tutor: selectedProps.selectedUser.UID,
+      type: type,
+      startTime: start.toString(),
+      endTime: end.toString(),
+    });
+    console.log("updated!");
+  }
 
   const [showSD, setShowSD] = useState(false);
   const [showST, setShowST] = useState(false);
@@ -141,19 +137,6 @@ export default function NewSessionScreen(props) {
     setShowET(Platform.OS === "ios");
     setEnd(currentTime);
   };
-
-  function fillInfoFromSelected() {
-    if (selectedProps.selectedSession) {
-      setType(selectedProps.selectedSession[1].type);
-      setDept(selectedProps.selectedSession[1].department);
-      setLocation(selectedProps.selectedSession[1].location);
-      setCapacity(selectedProps.selectedSession[1].maxCapacity);
-      setStart(new Date(selectedProps.selectedSession[1].startTime));
-      setEnd(new Date(selectedProps.selectedSession[1].endTime));
-      setChecked(selectedProps.selectedSession[1].courses);
-      currSID = selectedProps.selectedSession[0];
-    }
-  }
 
   return (
     <View style={globalStyles.screen}>
@@ -189,6 +172,7 @@ export default function NewSessionScreen(props) {
               mode={"dropdown"}
               onValueChange={(itemValue, itemIndex) => setDept(itemValue)}
             >
+              <Picker.Item label="Pick A Department" value="" />
               {departments.map((d) => (
                 <Picker.Item key={d} label={d} value={d} />
               ))}
@@ -298,8 +282,14 @@ export default function NewSessionScreen(props) {
           style={globalStyles.button}
           onPress={async () => {
             // UPDATE DATABASE HERE
-            if (selectedProps.selectedSession) {
+            if (
+              logVal(
+                "selectedProps.selectedSession",
+                selectedProps.selectedSession
+              )
+            ) {
               //if has selected session, update
+              await firebaseUpdateSession();
             } else {
               //no selected session (value=null), add new
               await firebaseAddNewSession();
@@ -312,7 +302,6 @@ export default function NewSessionScreen(props) {
         <TouchableOpacity
           style={globalStyles.button}
           onPress={() => {
-            // UPDATE DATABASE HERE
             props.navigation.navigate("Home");
           }}
         >

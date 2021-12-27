@@ -98,10 +98,11 @@ export default function ProfileScreen(props) {
       ([key, session]) => session.tutor === profileProps.selectedUser.UID
     );
     let tutored = [];
-    logVal("hosted", hosted).forEach(
-      ([key, session]) =>
-        (tutored = tutored.concat(logVal("session.courses", session.courses)))
-    );
+    logVal("hosted", hosted).forEach(([key, session]) => {
+      session.courses.forEach((c) =>
+        tutored.includes(c) ? null : tutored.push(c)
+      );
+    });
     setTutored(logVal("tutored", tutored));
   }
 
