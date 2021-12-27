@@ -34,6 +34,7 @@ export default function ProfileScreen(props) {
   const firebaseProps = screenProps.firebaseProps;
   const db = firebaseProps.db;
   const selectedProps = screenProps.selectedProps;
+  const Refresher = screenProps.firestoreProps.refresher;
 
   const selectedUser = screenProps.profileProps.selectedUser;
   const courses = screenProps.firestoreProps.courses;
@@ -99,8 +100,8 @@ export default function ProfileScreen(props) {
     );
     let tutored = [];
     logVal("hosted", hosted).forEach(([key, session]) => {
-      session.courses.forEach((c) =>
-        tutored.includes(c) ? null : tutored.push(c)
+      session.courses.forEach(
+        (c) => (tutored.includes(c) ? null : tutored.push(c)) //make sure no duplicates in tutored courses
       );
     });
     setTutored(logVal("tutored", tutored));
@@ -239,6 +240,7 @@ export default function ProfileScreen(props) {
         </View>
         <Button title="Sign Out" onPress={signOutAndGoToSignIn} />
       </ScrollView>
+      <Refresher></Refresher>
     </View>
   );
 }

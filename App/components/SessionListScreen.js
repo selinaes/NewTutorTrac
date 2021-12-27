@@ -16,6 +16,7 @@ const data = require("../data.json");
 function SessionsList(props) {
   const screenProps = useContext(StateContext);
   //(screenProps)
+  const Refresher = screenProps.firestoreProps.refresher;
 
   const courses = screenProps.firestoreProps.courses;
   const setCourses = screenProps.firestoreProps.setCourses;
@@ -110,6 +111,7 @@ function SessionsList(props) {
           })
         )}
       </ScrollView>
+      <Refresher></Refresher>
     </View>
   );
 }

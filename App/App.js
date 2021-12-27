@@ -16,6 +16,7 @@ import {
 } from "firebase/firestore";
 import { formatJSON, emailOf } from "./utils";
 import { Provider as PaperProvider } from "react-native-paper";
+import { FAB } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -103,23 +104,6 @@ export default function App(props) {
   const [selectedUser, setSelectedUser] = React.useState(null);
 
   const [selectedSession, setSelectedSession] = React.useState(null);
-  // const resetSelectedSession = () =>
-  //   setSelectedSession([
-  //     null,
-  //     {
-  //       recurringDay: "",
-  //       tutor: selectedUser.UID,
-  //       recurring: true,
-  //       attendedUID: [],
-  //       courses: [],
-  //       location: "",
-  //       startTime: new Date(Date.now()).toString(),
-  //       department: "",
-  //       endTime: new Date(Date.now()).toString(),
-  //       type: "",
-  //       maxCapacity: "",
-  //     },
-  //   ]);
 
   const firebaseProps = { auth, db };
   const profileProps = { selectedUser, setSelectedUser, logOut };
@@ -149,6 +133,7 @@ export default function App(props) {
     courses,
     setCourses,
     departments,
+    refresher,
   };
 
   const screenProps = {
@@ -243,6 +228,19 @@ export default function App(props) {
     };
   }, []);
 
+  function refresher() {
+    return (
+      <FAB
+        style={globalStyles.fab}
+        icon="cloud-refresh"
+        onPress={() => {
+          firebaseGetCourses();
+          firebaseGetUsers();
+          firebaseGetSessions();
+        }}
+      />
+    );
+  }
   /***************************************************************************
     TOP LEVEL RENDERING
    ***************************************************************************/

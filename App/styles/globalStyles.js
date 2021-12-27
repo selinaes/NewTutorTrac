@@ -132,4 +132,10 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: 'white',
         marginHorizontal: 20,
       },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+    },
   });
