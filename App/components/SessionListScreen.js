@@ -25,7 +25,8 @@ function SessionsList(props) {
   const sessions = screenProps.firestoreProps.sessions;
   const setSessions = screenProps.firestoreProps.setSessions;
 
-  const today = new Date(Date.now()).getDay();
+  const today = 3;
+  //   new Date(Date.now()).getDay();
 
   /***************************************************************************
   SESSIONS FUNCTIONALITY CODE

@@ -9,6 +9,16 @@ import {
   Array,
   ScrollView,
 } from "react-native";
+import {
+  doc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
+  query,
+  where,
+  collection,
+} from "firebase/firestore";
 import { Avatar } from "react-native-paper";
 const data = require("../data.json");
 import StateContext from "./StateContext.js";
@@ -20,47 +30,128 @@ import { globalStyles } from "../styles/globalStyles.js";
 const testDate = true;
 
 export default function DataDisplayScreen(props) {
-  const [dummy, setDummy] = React.useState(false);
   const screenProps = useContext(StateContext);
+  const Refresher = screenProps.firestoreProps.refresher;
+  const db = screenProps.firebaseProps.db;
+
   const selectedSession = screenProps.selectedProps.selectedSession;
   const setSelectedSession = screenProps.selectedProps.setSelectedSession;
-  /*setSelectedSession(data.sessions[screenProps.selectedProps - 1]);*/
 
   const courses = screenProps.firestoreProps.courses;
-  const setCourses = screenProps.firestoreProps.setCourses;
   const users = screenProps.firestoreProps.users;
   const setUsers = screenProps.firestoreProps.setUsers;
   const sessions = screenProps.firestoreProps.sessions;
   const setSessions = screenProps.firestoreProps.setSessions;
 
-  const attendsCourseLog = []; //all user attended who are registered for this class
-  const attendees = selectedSession[1].courses.map((course) => ({
-    title: courses[course].department + " " + courses[course].number, //the course they belong to
-    data: selectedSession[1].attendedUID.filter((user) => {
-      const attendsCourse = users[user].courses.includes(course); //a boolean, whether the attendedUID person take this course or not
-      if (logVal("attendsCourse", attendsCourse)) attendsCourseLog.push(user);
-      return attendsCourse;
-    }),
-  }));
-  attendees.push({
-    title: "OTHER",
-    data: selectedSession[1].attendedUID.filter(
-      (user) => !attendsCourseLog.includes(user) //people not in this class but attend anyway (due to fake data)
-    ),
-  });
+  const [attendees, setAttendees] = useState([]); //local state to take record of attending
+  const [useAttending, setUseAttending] = useState(false);
+
+  function calculateAttendees(attendList) {
+    const attendsCourseLog = []; //logging attended user who are registered for a relevant class
+
+    //a record for attendees, classify them based on which relevant course they belong, in the form: [{title:CS 317, data:xxx},{},...]
+    let workingAttendees = [];
+    workingAttendees = selectedSession[1].courses.map((course) => ({
+      title: courses[course].department + " " + courses[course].number, //the course they belong to
+      data: attendList.filter((user) => {
+        const attendsCourse = users[user].courses.includes(course); //a boolean, whether the attendList person take this specific course or not
+        if (attendsCourse) {
+          attendsCourseLog.push(user);
+        }
+        return attendsCourse; //returns the boolean value for the filtering
+      }),
+    }));
+    //For all other attended student, add to attendees
+    workingAttendees.push({
+      title: "OTHER",
+      data: attendList.filter(
+        (user) => !attendsCourseLog.includes(user) //people not in this class but attend anyway (due to fake data)
+      ),
+    });
+    setAttendees(workingAttendees);
+  }
 
   useEffect(() => {
-    //console.log(`on mount: courses('${formatJSON(courses)}')`);
-    console.log(selectedSession);
+    logVal("selectedSession", selectedSession);
+    firebaseCheckAttendingAndAddField();
     return () => {
       // Anything in here is fired on component unmount.
-      screenProps.selectedProps.resetSelectedSession();
+      screenProps.selectedProps.setSelectedSession(null);
     };
   }, []);
+
+  //everytime selectedSession changes, re-calculateAttendees
+  useEffect(() => {
+    calculateAttendees(
+      logVal("useAttending", useAttending)
+        ? selectedSession[1].attendingUID
+        : selectedSession[1].attendedUID
+    );
+  }, [selectedSession]);
+
+  async function firebaseCheckAttendingAndAddField() {
+    const docRef = doc(db, "sessions", selectedSession[0]);
+    const docSnap = await getDoc(docRef);
+    let remoteSession = docSnap.data();
+    if (remoteSession.hasOwnProperty("attendingUID")) {
+      setSelectedSession([docSnap.id, remoteSession]); //make sure selectedSession is the most up to date
+      setUseAttending(true);
+    } else {
+      await updateDoc(docRef, {
+        attendingUID: remoteSession.attendedUID, //if no such field, create one and make it the current "attendedUID"
+      });
+      const newSession = {
+        ...remoteSession,
+        attendingUID: remoteSession.attendedUID,
+      };
+      setSelectedSession([docSnap.id, newSession]); //make sure selectedSession is the most up to date, with "attendingUID" field
+      setUseAttending(true); //use existing attendedUID to calculate attendees
+    }
+  }
 
   const now = new Date(Date.now());
   const start = testDate ? now : new Date(selectedSession[1].startTime);
   const end = testDate ? now : new Date(selectedSession[1].endTime);
+
+  async function firebaseCheckIn() {
+    const docRef = doc(db, "sessions", selectedSession[0]);
+    const docSnap = await getDoc(docRef);
+    let attendingList = docSnap.data().attendingUID;
+    let attendedList = docSnap.data().attendedUID;
+    attendingList.push(screenProps.profileProps.selectedUser.UID);
+    if (!attendedList.includes(screenProps.profileProps.selectedUser.UID)) {
+      //make sure user not already in the attendedList---possible if they attended and then checked out
+      attendedList.push(screenProps.profileProps.selectedUser.UID);
+    }
+    await updateDoc(docRef, {
+      attendingUID: attendingList,
+      attendedUID: attendedList, //update both attending & attended List in Checkin
+    });
+    const newSession = {
+      ...docSnap.data(),
+      attendingUID: attendingList,
+      attendedUID: attendedList,
+    };
+    setSelectedSession([docSnap.id, newSession]);
+  }
+
+  async function firebaseCheckOut() {
+    const docRef = doc(db, "sessions", selectedSession[0]);
+    const docSnap = await getDoc(docRef);
+    let tempList = docSnap.data().attendingUID;
+    tempList.splice(
+      tempList.indexOf(screenProps.profileProps.selectedUser.UID),
+      1
+    ); //splice(start, deleteCount)
+    await updateDoc(docRef, {
+      attendingUID: tempList, //only need to delete from "attending" when person checkout, not "attended"
+    });
+    const newSession = {
+      ...docSnap.data(),
+      attendingUID: tempList,
+    };
+    setSelectedSession([docSnap.id, newSession]);
+  }
 
   return (
     <View style={globalStyles.screen}>
@@ -89,34 +180,22 @@ export default function DataDisplayScreen(props) {
         }
       ></DetailedSessionCard>
       <View>
-        {start.getDay() == now.getDay() &&
-        start.getHours() <= now.getHours() <= end.getHours() ? ( //checking whether today's weekday is the same as session start day, and now is between start & end's hours
-          selectedSession[1].attendedUID.includes(
+        {start.getDay() == now.getDay() && //checking whether today's weekday is the same as session start day
+        start.getHours() <= now.getHours() <= end.getHours() && //checking whether and now is between start & end's hours
+        useAttending ? ( //only allow checkin/checkout visibility when using attending data
+          selectedSession[1].attendingUID.includes(
             screenProps.profileProps.selectedUser.UID //checking whether attendedUID include current user. if so check-out, otherwise check-in
           ) ? (
             <Button
               onPress={() => {
-                let temp = selectedSession;
-                temp[1].attendedUID.splice(
-                  temp[1].attendedUID.indexOf(
-                    screenProps.profileProps.selectedUser.UID
-                  ),
-                  1
-                ); //splice(start, deleteCount)
-                setSelectedSession(temp);
-                setDummy(!dummy);
+                firebaseCheckOut();
               }}
               title="Check Out"
             />
           ) : (
             <Button
               onPress={() => {
-                let temp = selectedSession;
-                temp[1].attendedUID.push(
-                  screenProps.profileProps.selectedUser.UID
-                );
-                setSelectedSession(temp);
-                setDummy(!dummy);
+                firebaseCheckIn();
               }}
               title="Check In"
             />
@@ -128,7 +207,7 @@ export default function DataDisplayScreen(props) {
       <SafeAreaView>
         <Text>Attendees</Text>
         <SectionList
-          sections={attendees}
+          sections={logVal("attendees", attendees)}
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <Avatar.Text
@@ -140,6 +219,7 @@ export default function DataDisplayScreen(props) {
           renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
         />
       </SafeAreaView>
+      <Refresher></Refresher>
     </View>
   );
 }
