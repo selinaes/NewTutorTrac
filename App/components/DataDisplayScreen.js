@@ -153,6 +153,13 @@ export default function DataDisplayScreen(props) {
     setSelectedSession([docSnap.id, newSession]);
   }
 
+  function updateSelectedToSessions() {
+    let SID = selectedSession[0];
+    let temp = JSON.parse(JSON.stringify(sessions));
+    temp[SID] = selectedSession[1];
+    setSessions(temp);
+  }
+
   return (
     <View style={globalStyles.screen}>
       <DetailedSessionCard
@@ -187,15 +194,17 @@ export default function DataDisplayScreen(props) {
             screenProps.profileProps.selectedUser.UID //checking whether attendedUID include current user. if so check-out, otherwise check-in
           ) ? (
             <Button
-              onPress={() => {
-                firebaseCheckOut();
+              onPress={async () => {
+                await firebaseCheckOut();
+                updateSelectedToSessions();
               }}
               title="Check Out"
             />
           ) : (
             <Button
-              onPress={() => {
-                firebaseCheckIn();
+              onPress={async () => {
+                await firebaseCheckIn();
+                updateSelectedToSessions();
               }}
               title="Check In"
             />
