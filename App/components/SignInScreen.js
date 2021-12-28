@@ -138,40 +138,25 @@ export default function SignInScreen(props) {
 
   function signInUserEmailPassword() {
     console.log("called signInUserEmailPassword");
-    console.log(
-      `signInUserEmailPassword: emailOf(currentUser)0=${emailOf(
-        auth.currentUser
-      )}`
-    );
-    console.log(
-      `signInUserEmailPassword: emailOf(loggedInUser)0=${emailOf(loggedInUser)}`
-    );
+    console.log( `signInUserEmailPassword: emailOf(currentUser)0=${emailOf(auth.currentUser)}`);
+    console.log(`signInUserEmailPassword: emailOf(loggedInUser)0=${emailOf(loggedInUser)}` );
     // Invoke Firebase authentication API for Email/Password sign in
     // Use Email/Password for authentication
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(
-          `signInUserEmailPassword succeeded for email ${email}; have userCredential for emailOf(auth.currentUser)=${emailOf(
-            auth.currentUser
+        console.log(`signInUserEmailPassword succeeded for email ${email}; have userCredential for emailOf(auth.currentUser)=${emailOf(auth.currentUser
           )} (but may not be verified)`
         );
-        console.log(
-          `signInUserEmailPassword: emailOf(currentUser)1=${emailOf(
-            auth.currentUser
+        console.log(`signInUserEmailPassword: emailOf(currentUser)1=${emailOf(auth.currentUser
           )}`
         );
-        console.log(
-          `signInUserEmailPassword: emailOf(loggedInUser)1=${emailOf(
-            loggedInUser
+        console.log(`signInUserEmailPassword: emailOf(loggedInUser)1=${emailOf(loggedInUser
           )}`
         );
 
         // Only log in auth.currentUser if their email is verified
         checkEmailVerification().then((user) => checkNewUser(user));
 
-        // selectedProps.setSelectedUser(
-        //   data.users.filter((user) => user.email === email)[0]
-        // );
 
         // Clear email/password inputs
         //setEmail("");

@@ -1,25 +1,13 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, Text, View, Button, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Button } from "react-native";
 import {
   Headline,
   Paragraph,
   BottomNavigation,
   Avatar,
   Appbar,
+  IconButton,
 } from "react-native-paper";
-import {
-  // access to Firestore storage features:
-  getFirestore,
-  // for storage access
-  collection,
-  doc,
-  addDoc,
-  setDoc,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
 import { globalStyles } from "../styles/globalStyles.js";
 import StateContext from "./StateContext.js";
 import CourseItem from "./CourseItem.js";
@@ -36,7 +24,6 @@ export default function ProfileScreen(props) {
   const selectedProps = screenProps.selectedProps;
   const Refresher = screenProps.firestoreProps.refresher;
 
-  const selectedUser = screenProps.profileProps.selectedUser;
   const courses = screenProps.firestoreProps.courses;
   const setCourses = screenProps.firestoreProps.setCourses;
   const users = screenProps.firestoreProps.users;
@@ -206,10 +193,6 @@ export default function ProfileScreen(props) {
         >
           Hosted Sessions
         </Headline>
-        <Button
-          title="Add New"
-          onPress={() => props.navigation.navigate("Add/Modify Session")}
-        />
         <View style={globalStyles.courseContainer}>
           {hostedSessions.map(([key, session]) => {
             let index = parseInt(key);
@@ -238,6 +221,15 @@ export default function ProfileScreen(props) {
             );
           })}
         </View>
+
+        <IconButton
+          icon="plus-circle-outline"
+          color={"#3498db"}
+          size={40}
+          style={styles.iconButton}
+          onPress={() => props.navigation.navigate("Add/Modify Session")}
+        />
+
         <Button title="Sign Out" onPress={signOutAndGoToSignIn} />
       </ScrollView>
       <Refresher></Refresher>
@@ -251,5 +243,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
+  },
+  iconButton: {
+    alignSelf: "center",
   },
 });

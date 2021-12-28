@@ -145,7 +145,7 @@ export default function NewUserScreen(props) {
                 classyear: classyear,
                 courses: checked,
                 email: emailOf(loggedInUser),
-                UID: selectedUser.UID,
+                UID: selectedProps.selectedUser.UID,
               });
               props.navigation.navigate("Home");
             } else {

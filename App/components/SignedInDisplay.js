@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { globalStyles } from "../styles/globalStyles.js";
+import { ActivityIndicator, Colors } from "react-native-paper";
 import StateContext from "./StateContext.js";
 
 export default function SignedInDisplay(props) {
@@ -11,11 +12,12 @@ export default function SignedInDisplay(props) {
       <Text style={styles.counterText}>
         Signed in: {signedInProps.loggedInUser.email}
       </Text>
+      <ActivityIndicator animating={true} color={"#3498db"} size={200} />
       <Button title={"Sign Out"} onPress={props.signOutUser} />
-      <Button
+      {/* <Button
         title="Continue to app"
         onPress={() => props.navigation.navigate("Setup")}
-      />
+      /> */}
     </View>
   );
 }

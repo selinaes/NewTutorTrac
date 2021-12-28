@@ -69,6 +69,22 @@ export default function NewSessionScreen(props) {
   const [end, setEnd] = React.useState(new Date(Date.now()));
   const [checked, setChecked] = React.useState([]);
 
+  const [errorMsg, setErrorMsg] = React.useState("");
+
+  useEffect(() => {
+    if (checkNonEmpty()) setErrorMsg("");
+  }, [type, checked, department, location, capacity, start, end]);
+
+  function checkNonEmpty() {
+    return (
+      type !== "" &&
+      department !== "" &&
+      location !== "" &&
+      capacity !== "" &&
+      checked.length > 0
+    );
+  }
+
   var days = ["U", "M", "T", "W", "R", "F", "S"]; //Start with Sunday, end with Saturday
 
   async function firebaseAddNewSession() {
@@ -276,25 +292,29 @@ export default function NewSessionScreen(props) {
           })}
         </View>
       </ScrollView>
+      <View
+        style={errorMsg === "" ? globalStyles.hidden : globalStyles.errorBox}
+      >
+        <Text style={globalStyles.errorMessage}>{errorMsg}</Text>
+      </View>
 
       <View style={globalStyles.buttonHolder}>
         <TouchableOpacity
           style={globalStyles.button}
           onPress={async () => {
             // UPDATE DATABASE HERE
-            if (
-              logVal(
-                "selectedProps.selectedSession",
-                selectedProps.selectedSession
-              )
-            ) {
-              //if has selected session, update
-              await firebaseUpdateSession();
+            if (checkNonEmpty()) {
+              if (selectedProps.selectedSession) {
+                //if has selected session, update
+                await firebaseUpdateSession();
+              } else {
+                //no selected session (value=null), add new
+                await firebaseAddNewSession();
+              }
+              props.navigation.navigate("Home");
             } else {
-              //no selected session (value=null), add new
-              await firebaseAddNewSession();
+              setErrorMsg("Please fill in all information fields!");
             }
-            props.navigation.navigate("Home");
           }}
         >
           <Text style={globalStyles.buttonText}>Save</Text>
