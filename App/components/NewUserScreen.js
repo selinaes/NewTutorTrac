@@ -50,7 +50,7 @@ export default function NewUserScreen(props) {
   }, [name, checked, classyear]);
 
   function fillInfoFromCurrent() {
-    if (selectedProps.selectedUser) {
+    if (selectedProps.selectedUser.hasOwnProperty("name")) {
       setChecked(selectedProps.selectedUser.courses);
       setName(selectedProps.selectedUser.name);
       setYear(selectedProps.selectedUser.classyear);
