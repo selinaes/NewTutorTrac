@@ -87,10 +87,10 @@ export default function SignInScreen(props) {
       signOut(auth); // sign out auth's current user (who is not loggedInUser,
       // or else we wouldn't be here
     }
-    // if (!email.includes("@wellesley.edu")) {
-    //   setErrorMsg("Not a valid Wellesley email address");
-    //   return;
-    // }
+    if (!email.includes("@wellesley.edu")) {
+      setErrorMsg("Not a valid Wellesley email address");
+      return;
+    }
     if (password.length < 6) {
       setErrorMsg("Password too short");
       return;
