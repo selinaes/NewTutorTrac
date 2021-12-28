@@ -218,15 +218,21 @@ export default function App(props) {
    ***************************************************************************/
   useEffect(() => {
     console.log("App did mount");
-    firebaseGetCourses();
-    firebaseGetUsers();
-    firebaseGetSessions();
-
     return () => {
       // Anything in here is fired on component unmount.
       console.log("App did unmount");
     };
   }, []);
+
+  //only fetch data when user logged in. This is because now only logged in user has the permission to read/write.
+  useEffect(() => {
+    if (loggedInUser !== null) {
+      firebaseGetCourses();
+      firebaseGetUsers();
+      firebaseGetSessions();
+      console.log("Firebase fetched all data");
+    }
+  }, [loggedInUser]);
 
   function refresher() {
     return (
