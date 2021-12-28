@@ -34,6 +34,7 @@ export default function NewSessionScreen(props) {
   const db = screenProps.firebaseProps.db;
   const courses = screenProps.firestoreProps.courses;
   const departments = screenProps.firestoreProps.departments;
+  const firebaseGetSessions = screenProps.firestoreProps.firebaseGetSessions;
 
   //on mount and unmount
   useEffect(() => {
@@ -108,6 +109,7 @@ export default function NewSessionScreen(props) {
     await updateDoc(doc(db, "ids", "SID"), {
       maxUsed: next,
     });
+    setSID(next);
   }
 
   async function firebaseUpdateSession() {
@@ -311,6 +313,7 @@ export default function NewSessionScreen(props) {
                 //no selected session (value=null), add new
                 await firebaseAddNewSession();
               }
+              await firebaseGetSessions();
               props.navigation.navigate("Home");
             } else {
               setErrorMsg("Please fill in all information fields!");

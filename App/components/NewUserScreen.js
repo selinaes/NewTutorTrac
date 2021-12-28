@@ -29,6 +29,8 @@ export default function NewUserScreen(props) {
   const selectedProps = screenProps.selectedProps;
   const db = screenProps.firebaseProps.db;
   const courses = screenProps.firestoreProps.courses;
+  const users = screenProps.firestoreProps.users;
+  const setUsers = screenProps.firestoreProps.setUsers;
 
   const [checked, setChecked] = React.useState([]);
   const [name, setName] = React.useState("");
@@ -78,6 +80,13 @@ export default function NewUserScreen(props) {
       classyear: logVal("classyear", classyear),
       courses: checked,
     });
+  }
+
+  function updateSelectedUserToUsers() {
+    let UID = selectedProps.selectedUser.UID.toString();
+    let temp = JSON.parse(JSON.stringify(logVal("selectedProps.users", users)));
+    temp[UID] = selectedProps.selectedUser;
+    setUsers(temp);
   }
 
   return (
@@ -147,6 +156,7 @@ export default function NewUserScreen(props) {
                 email: emailOf(loggedInUser),
                 UID: selectedProps.selectedUser.UID,
               });
+              updateSelectedUserToUsers();
               props.navigation.navigate("Home");
             } else {
               setErrorMsg(
