@@ -134,6 +134,7 @@ export default function App(props) {
     setCourses,
     departments,
     refresher,
+    firebaseGetSessions,
   };
 
   const screenProps = {

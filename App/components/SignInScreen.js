@@ -205,15 +205,15 @@ export default function SignInScreen(props) {
   async function checkNewUser(user) {
     //passed in user: auth.currentUser
     let curUser = await firebaseGetCurrentUser(user);
-    if (curUser) {
-      selectedProps.setSelectedUser(curUser); //set selected user as this existing user
-      props.navigation.navigate("Home");
-    } else {
-      //case when it is a first-time user
+    if (!curUser || !curUser.hasOwnProperty("name")){
+      //case when it is a first-time user, or skipped set-up last time
       let newUID = await firebaseAddNewUser(user);
       let userObj = { UID: newUID, email: emailOf(user) };
       selectedProps.setSelectedUser(userObj);
       props.navigation.navigate("Setup");
+    } else{
+      selectedProps.setSelectedUser(curUser); //set selected user as this existing user
+      props.navigation.navigate("Home");
     }
   }
 
