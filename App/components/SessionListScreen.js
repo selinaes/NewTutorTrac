@@ -49,49 +49,11 @@ function SessionsList(props) {
     <View style={globalStyles.screen}>
       <ScrollView style={globalStyles.scrollView}>
         <Headline>Today's Sessions</Headline>
-        {daySessions[0].map(([key, session]) => {
-          let index = parseInt(key);
-          return (
-            <SessionCard
-              key={index}
-              subtitle={users[session.tutor].name}
-              title={
-                session.type +
-                ": " +
-                (session.courses.length > 0
-                  ? courses[session.courses[0]].department +
-                    " " +
-                    (session.type === "Cafe"
-                      ? ""
-                      : courses[session.courses[0]].number)
-                  : "")
-              }
-              action={(session) => {
-                screenProps.selectedProps.setSelectedSession([key, session]);
-                props.navigation.navigate("Session Details");
-              }}
-              data={session}
-              content={
-                <View style={globalStyles.courseContainer}>
-                  {session.courses.map((id) => (
-                    <CourseItem
-                      key={id}
-                      department={courses[id].department}
-                      number={courses[id].number}
-                    ></CourseItem>
-                  ))}
-                </View>
-              }
-            ></SessionCard>
-          );
-        })}
-
-        <Headline>Future Sessions</Headline>
-        {daySessions.slice(1).map((day) =>
-          day.map(([key, session]) => {
+        <View style={globalStyles.courseContainer}>
+          {daySessions[0].map(([key, session]) => {
             let index = parseInt(key);
             return (
-              <SimplifiedSessionCard
+              <SessionCard
                 key={index}
                 subtitle={users[session.tutor].name}
                 title={
@@ -105,11 +67,53 @@ function SessionsList(props) {
                         : courses[session.courses[0]].number)
                     : "")
                 }
-                content={session.startTime}
-              ></SimplifiedSessionCard>
+                action={(session) => {
+                  screenProps.selectedProps.setSelectedSession([key, session]);
+                  props.navigation.navigate("Session Details");
+                }}
+                data={session}
+                content={
+                  <View style={globalStyles.courseContainer}>
+                    {session.courses.map((id) => (
+                      <CourseItem
+                        key={id}
+                        department={courses[id].department}
+                        number={courses[id].number}
+                      ></CourseItem>
+                    ))}
+                  </View>
+                }
+              ></SessionCard>
             );
-          })
-        )}
+          })}
+        </View>
+
+        <Headline>Future Sessions</Headline>
+        <View style={globalStyles.courseContainer}>
+          {daySessions.slice(1).map((day) =>
+            day.map(([key, session]) => {
+              let index = parseInt(key);
+              return (
+                <SimplifiedSessionCard
+                  key={index}
+                  subtitle={users[session.tutor].name}
+                  title={
+                    session.type +
+                    ": " +
+                    (session.courses.length > 0
+                      ? courses[session.courses[0]].department +
+                        " " +
+                        (session.type === "Cafe"
+                          ? ""
+                          : courses[session.courses[0]].number)
+                      : "")
+                  }
+                  content={session.startTime}
+                ></SimplifiedSessionCard>
+              );
+            })
+          )}
+        </View>
       </ScrollView>
       <Refresher></Refresher>
     </View>

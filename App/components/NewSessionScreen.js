@@ -162,7 +162,7 @@ export default function NewSessionScreen(props) {
         <Appbar.Content title="Add/Modify Session" />
       </Appbar.Header>
       <ScrollView style={globalStyles.scrollView}>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 2 }}>
           <RadioButton.Group
             onValueChange={(newValue) => setType(newValue)}
             value={type}
@@ -217,17 +217,12 @@ export default function NewSessionScreen(props) {
             />
           </View>
 
-          <View style={globalStyles.labeledInput}>
+          <View>
             <Text style={globalStyles.inputLabel}>Date and Time: </Text>
             <Text>Start: {start.toString()}</Text>
             <View style={globalStyles.buttonHolder}>
               <Button onPress={() => setShowSD(true)} title="Set Start Date" />
               <Button onPress={() => setShowST(true)} title="Set Start Time" />
-            </View>
-            <Text>End: {end.toString()}</Text>
-            <View style={globalStyles.buttonHolder}>
-              <Button onPress={() => setShowED(true)} title="Set End Date" />
-              <Button onPress={() => setShowET(true)} title="Set End Time" />
             </View>
             {showSD && (
               <DateTimePicker
@@ -249,6 +244,12 @@ export default function NewSessionScreen(props) {
                 onChange={onChangeST}
               />
             )}
+
+            <Text>End: {end.toString()}</Text>
+            <View style={globalStyles.buttonHolder}>
+              <Button onPress={() => setShowED(true)} title="Set End Date" />
+              <Button onPress={() => setShowET(true)} title="Set End Time" />
+            </View>
             {showED && (
               <DateTimePicker
                 testID="dateTimePicker"
