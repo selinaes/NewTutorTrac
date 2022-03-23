@@ -1,6 +1,9 @@
 # TutorTrac
 Final project: reimagining TutorTrac as a mobile app.
 
+## Beta Version Documentation
+https://docs.google.com/document/d/1WNJaBHZYOiQDTxMFQSjVRo4B7PS9D4gSXZKrqBrbpk4/edit#heading=h.f1iyflj6utzq
+
 ## Alpha Version Overview
 ### State of implementation
 
